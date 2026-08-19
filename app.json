@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Find Your People",
+    "slug": "find-your-people",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.findyourpeople.app"
+    },
+    "android": {
+      "package": "com.findyourpeople.app"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "newArchEnabled": true
+  }
+}
