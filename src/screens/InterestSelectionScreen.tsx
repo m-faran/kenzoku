@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,19 +6,26 @@ import {
   ScrollView,
   SafeAreaView,
   TextInput,
+  Alert,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../navigation/RootNavigator";
 import Button from "../components/Button";
+import Input from "../components/Input";
 import InterestChip from "../components/InterestChip";
 import { ALL_INTERESTS, Interest } from "../data/mockData";
+import { useUser } from "../context/UserContext";
 
 type Props = NativeStackScreenProps<RootStackParamList, "InterestSelection">;
 
 export default function InterestSelectionScreen({ navigation }: Props) {
+  const { user, updateUser } = useUser();
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>(user.interests || []);
+  const [specificInterests, setSpecificInterests] = useState(user.specificInterests || "");
+  const scrollViewRef = useRef<ScrollView>(null);
+  const inputRef = useRef<TextInput>(null);
 
   const filtered = search
     ? ALL_INTERESTS.filter((i) =>
@@ -86,6 +93,7 @@ export default function InterestSelectionScreen({ navigation }: Props) {
         </View>
 
         <ScrollView
+          ref={scrollViewRef}
           className="flex-1 px-6"
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
@@ -142,13 +150,61 @@ export default function InterestSelectionScreen({ navigation }: Props) {
               />
             ))}
           </View>
+
+          {/* Specific Interests prompt */}
+          {selected.length > 0 && (
+            <View className="mt-4 mb-8">
+              <Text className="text-foreground font-body-semi text-sm mb-2">
+                Specify your interests (Optional)
+              </Text>
+              <View className="bg-white border border-border rounded-xl px-4 py-3">
+                <TextInput
+                  ref={inputRef}
+                  className="text-foreground font-body text-sm leading-relaxed"
+                  placeholder="e.g. For Anime, Attack on Titan. For Coding, React or Python. We use these to help you discover the right people!"
+                  placeholderTextColor="#A1A1AA"
+                  value={specificInterests}
+                  onChangeText={setSpecificInterests}
+                  multiline
+                  style={{ minHeight: 80, textAlignVertical: 'top' }}
+                />
+              </View>
+            </View>
+          )}
         </ScrollView>
 
         {/* CTA */}
         <View className="px-6 pb-6 pt-3 bg-surface border-t border-border">
           <Button
             label={selected.length > 0 ? `Continue with ${selected.length} interest${selected.length > 1 ? "s" : ""}` : "Continue"}
-            onPress={() => navigation.replace("Main")}
+            onPress={() => {
+              const proceed = () => {
+                updateUser({ interests: selected, specificInterests });
+                navigation.replace("Main");
+              };
+
+              if (selected.length > 0 && specificInterests.trim() === "") {
+                Alert.alert(
+                  "Specify Interests?",
+                  "You haven't specified your interests. While optional, adding specifics helps us connect you with the right people!",
+                  [
+                    { 
+                      text: "Add Specifics", 
+                      style: "cancel",
+                      onPress: () => {
+                        setTimeout(() => {
+                          scrollViewRef.current?.scrollToEnd({ animated: true });
+                          inputRef.current?.focus();
+                        }, 300);
+                      }
+                    },
+                    { text: "Continue Anyway", onPress: proceed },
+                  ]
+                );
+              } else {
+                proceed();
+              }
+            }}
             disabled={selected.length === 0}
           />
         </View>

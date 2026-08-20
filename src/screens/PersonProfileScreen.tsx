@@ -20,6 +20,7 @@ import {
   getInterestLabel,
   getInterestEmoji,
 } from "../data/mockData";
+import { useUser } from "../context/UserContext";
 
 type Props = NativeStackScreenProps<DiscoverStackParamList, "PersonProfile">;
 
@@ -28,9 +29,10 @@ const PHOTO_HEIGHT = W * 1.05;
 
 export default function PersonProfileScreen({ route, navigation }: Props) {
   const person = getPersonById(route.params.personId);
+  const { user } = useUser();
   if (!person) return null;
 
-  const shared = getSharedInterests(person.interests);
+  const shared = getSharedInterests(person.interests, user.interests);
   const otherInterests = person.interests.filter((id) => !shared.includes(id));
 
   return (
@@ -81,6 +83,14 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
           <Text className="text-foreground font-body text-base leading-relaxed mb-6">
             {person.bio}
           </Text>
+
+          {/* Motive */}
+          {person.motive && (
+            <View className="bg-accent/10 border border-accent/20 rounded-2xl p-4 mb-6 items-center">
+              <Text className="text-accent font-body-semi text-xs text-center uppercase tracking-wider mb-1">Motive</Text>
+              <Text className="text-foreground font-body text-sm text-center">"{person.motive}"</Text>
+            </View>
+          )}
 
           {/* Shared interests */}
           {shared.length > 0 && (

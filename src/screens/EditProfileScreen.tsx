@@ -13,14 +13,18 @@ import Avatar from "../components/Avatar";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import InterestChip from "../components/InterestChip";
-import { MY_INTERESTS, getInterestLabel, getInterestEmoji } from "../data/mockData";
+import { getInterestLabel, getInterestEmoji } from "../data/mockData";
+import { useUser } from "../context/UserContext";
 
 export default function EditProfileScreen() {
   const navigation = useNavigation();
-  const [name, setName] = useState("Alex Rivera");
-  const [bio, setBio] = useState("Builder and chess obsessive. Working on dev tools for distributed teams.");
-  const [city, setCity] = useState("San Francisco");
-  const [school, setSchool] = useState("Stanford University");
+  const { user, updateUser } = useUser();
+  const [name, setName] = useState(user.name);
+  const [bio, setBio] = useState(user.bio);
+  const [motive, setMotive] = useState(user.motive);
+  const [specificInterests, setSpecificInterests] = useState(user.specificInterests);
+  const [city, setCity] = useState(user.city);
+  const [school, setSchool] = useState(user.school);
 
   return (
     <SafeAreaView className="flex-1 bg-surface">
@@ -38,6 +42,7 @@ export default function EditProfileScreen() {
           <Text className="text-foreground font-body-semi text-base">Edit Profile</Text>
           <Pressable
             onPress={() => {
+              updateUser({ name, bio, motive, specificInterests, city, school });
               Alert.alert("Saved", "Your profile has been updated.");
               navigation.goBack();
             }}
@@ -51,7 +56,7 @@ export default function EditProfileScreen() {
         <View className="items-center mb-8">
           <Pressable className="active:opacity-80">
             <Avatar
-              uri="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&auto=format"
+              uri={user.photo}
               size={88}
             />
             <View className="absolute bottom-0 right-0 bg-primary w-7 h-7 rounded-full items-center justify-center border-2 border-white">
@@ -67,6 +72,20 @@ export default function EditProfileScreen() {
           value={bio}
           onChangeText={setBio}
           placeholder="Tell people what you're about"
+          multiline
+          numberOfLines={3}
+        />
+        <Input
+          label="Motive"
+          value={motive}
+          onChangeText={setMotive}
+          placeholder="Why are you joining? (e.g. 'Making friends', 'Networking')"
+        />
+        <Input
+          label="Specific Interests"
+          value={specificInterests}
+          onChangeText={setSpecificInterests}
+          placeholder="e.g. For Anime, Attack on Titan. For Coding, React or Python."
           multiline
           numberOfLines={3}
         />
@@ -87,7 +106,7 @@ export default function EditProfileScreen() {
             </Pressable>
           </View>
           <View className="flex-row flex-wrap gap-2">
-            {MY_INTERESTS.map((id) => (
+            {user.interests.map((id) => (
               <InterestChip
                 key={id}
                 label={getInterestLabel(id)}
@@ -99,6 +118,7 @@ export default function EditProfileScreen() {
         </View>
 
         <Button label="Save Changes" onPress={() => {
+          updateUser({ name, bio, motive, specificInterests, city, school });
           Alert.alert("Saved", "Your profile has been updated.");
           navigation.goBack();
         }} />

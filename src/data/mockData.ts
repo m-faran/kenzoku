@@ -11,6 +11,8 @@ export type Person = {
   city: string;
   bio: string;
   photo: string;
+  motive?: string;
+  specificInterests?: string;
   interests: string[];
 };
 
@@ -41,9 +43,8 @@ export type Notification = {
 export const ALL_INTERESTS: Interest[] = [
   { id: "chess", label: "Chess", emoji: "♟️" },
   { id: "photography", label: "Photography", emoji: "📷" },
-  { id: "blockchain", label: "Blockchain", emoji: "⛓️" },
-  { id: "programming", label: "Programming", emoji: "💻" },
-  { id: "rust", label: "Rust", emoji: "🦀" },
+  { id: "coding", label: "Coding", emoji: "💻" },
+  { id: "technology", label: "Technology", emoji: "📱" },
   { id: "gaming", label: "Gaming", emoji: "🎮" },
   { id: "football", label: "Football", emoji: "⚽" },
   { id: "music", label: "Music", emoji: "🎵" },
@@ -54,20 +55,13 @@ export const ALL_INTERESTS: Interest[] = [
   { id: "drawing", label: "Drawing", emoji: "✏️" },
   { id: "robotics", label: "Robotics", emoji: "🤖" },
   { id: "startups", label: "Startups", emoji: "🚀" },
-  { id: "astrophotography", label: "Astrophotography", emoji: "🔭" },
-  { id: "music-production", label: "Music Production", emoji: "🎛️" },
+  { id: "science", label: "Science", emoji: "🔬" },
+  { id: "outdoors", label: "Outdoors", emoji: "🌲" },
+  { id: "art", label: "Art", emoji: "🎨" },
   { id: "climbing", label: "Climbing", emoji: "🧗" },
-  { id: "3d-printing", label: "3D Printing", emoji: "🖨️" },
   { id: "yoga", label: "Yoga", emoji: "🧘" },
 ];
 
-export const MY_INTERESTS = [
-  "chess",
-  "programming",
-  "blockchain",
-  "startups",
-  "film",
-];
 
 export const PEOPLE: Person[] = [
   {
@@ -78,7 +72,9 @@ export const PEOPLE: Person[] = [
     bio: "Building things and playing chess. Always looking for a good game.",
     photo:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop&auto=format",
-    interests: ["chess", "programming", "blockchain", "gaming", "startups"],
+    motive: "Meeting like-minded builders",
+    specificInterests: "Rust, Blockchain, Distributed Systems",
+    interests: ["chess", "coding", "technology", "gaming", "startups"],
   },
   {
     id: "2",
@@ -88,7 +84,7 @@ export const PEOPLE: Person[] = [
     bio: "Street photographer chasing light. Film camera enthusiast.",
     photo:
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=800&fit=crop&auto=format",
-    interests: ["photography", "film", "music", "books", "drawing"],
+    interests: ["photography", "film", "music", "books", "art"],
   },
   {
     id: "3",
@@ -98,7 +94,8 @@ export const PEOPLE: Person[] = [
     bio: "Full-stack dev by day, Rust evangelist by night. Obsessed with systems programming.",
     photo:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&h=800&fit=crop&auto=format",
-    interests: ["programming", "rust", "blockchain", "robotics", "chess"],
+    specificInterests: "Rust evangelist, systems programming",
+    interests: ["coding", "technology", "robotics", "chess"],
   },
   {
     id: "4",
@@ -108,11 +105,13 @@ export const PEOPLE: Person[] = [
     bio: "Building the next big thing from Lagos. Startup founder, music producer on weekends.",
     photo:
       "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=600&h=800&fit=crop&auto=format",
+    motive: "Networking and finding co-founders",
+    specificInterests: "Music production, React Native",
     interests: [
       "startups",
-      "music-production",
-      "blockchain",
-      "programming",
+      "music",
+      "technology",
+      "coding",
       "fitness",
     ],
   },
@@ -124,7 +123,8 @@ export const PEOPLE: Person[] = [
     bio: "Astrophotographer trying to capture the Milky Way from my rooftop. Anime lover.",
     photo:
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=800&fit=crop&auto=format",
-    interests: ["astrophotography", "anime", "photography", "film", "books"],
+    specificInterests: "Astrophotography, capturing the Milky Way",
+    interests: ["science", "anime", "photography", "film", "books"],
   },
   {
     id: "6",
@@ -134,7 +134,8 @@ export const PEOPLE: Person[] = [
     bio: "Robotics engineer. Also into chess and 3D printing weird things.",
     photo:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&h=800&fit=crop&auto=format",
-    interests: ["robotics", "chess", "3d-printing", "programming", "gaming"],
+    specificInterests: "3D printing weird things",
+    interests: ["robotics", "chess", "technology", "coding", "gaming"],
   },
   {
     id: "7",
@@ -144,7 +145,7 @@ export const PEOPLE: Person[] = [
     bio: "Filmmaker working on my first feature. Love finding hidden gems in cinema.",
     photo:
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=600&h=800&fit=crop&auto=format",
-    interests: ["film", "startups", "books", "drawing", "music"],
+    interests: ["film", "startups", "books", "art", "music"],
   },
   {
     id: "8",
@@ -154,7 +155,8 @@ export const PEOPLE: Person[] = [
     bio: "Climber and yoga practitioner. Also deep into fitness science.",
     photo:
       "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=600&h=800&fit=crop&auto=format",
-    interests: ["climbing", "yoga", "fitness", "books", "photography"],
+    specificInterests: "Fitness science",
+    interests: ["climbing", "yoga", "fitness", "outdoors", "photography"],
   },
 ];
 
@@ -289,8 +291,8 @@ export const NOTIFICATIONS: Notification[] = [
   },
 ];
 
-export function getSharedInterests(personInterests: string[]): string[] {
-  return personInterests.filter((i) => MY_INTERESTS.includes(i));
+export function getSharedInterests(personInterests: string[], myInterests: string[]): string[] {
+  return personInterests.filter((i) => myInterests.includes(i));
 }
 
 export function getInterestLabel(id: string): string {

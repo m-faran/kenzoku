@@ -15,12 +15,14 @@ import Avatar from "../components/Avatar";
 import InterestChip from "../components/InterestChip";
 import SettingsRow from "../components/SettingsRow";
 import Button from "../components/Button";
-import { MY_INTERESTS, getInterestLabel, getInterestEmoji } from "../data/mockData";
+import { getInterestLabel, getInterestEmoji } from "../data/mockData";
+import { useUser } from "../context/UserContext";
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, "Profile">;
 
 export default function ProfileScreen() {
   const navigation = useNavigation<Nav>();
+  const { user } = useUser();
 
   const menuItems = [
     {
@@ -62,21 +64,27 @@ export default function ProfileScreen() {
         {/* Header */}
         <View className="items-center px-6 pt-8 pb-6">
           <Avatar
-            uri="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&auto=format"
+            uri={user.photo}
             size={88}
           />
-          <Text className="text-foreground font-display text-2xl mt-4 mb-0.5">Alex Rivera</Text>
-          <Text className="text-muted font-body text-sm mb-1">📍 San Francisco</Text>
+          <Text className="text-foreground font-display text-2xl mt-4 mb-0.5">{user.name || "Your Name"}</Text>
+          <Text className="text-muted font-body text-sm mb-1">{user.city ? `📍 ${user.city}` : ""}</Text>
           <Text className="text-muted font-body text-sm text-center mt-2 leading-relaxed px-4">
-            Builder and chess obsessive. Working on dev tools for distributed teams.
+            {user.bio}
           </Text>
+          {user.motive ? (
+            <View className="bg-accent/10 border border-accent/20 rounded-xl px-4 py-2 mt-4">
+              <Text className="text-accent font-body-semi text-xs text-center uppercase tracking-wider mb-0.5">Motive</Text>
+              <Text className="text-foreground font-body text-sm text-center">"{user.motive}"</Text>
+            </View>
+          ) : null}
         </View>
 
         {/* Interests */}
         <View className="px-6 mb-6">
           <Text className="text-foreground font-body-semi text-sm mb-3">My Interests</Text>
           <View className="flex-row flex-wrap gap-2">
-            {MY_INTERESTS.map((id) => (
+            {user.interests.map((id) => (
               <InterestChip
                 key={id}
                 label={getInterestLabel(id)}
@@ -85,6 +93,14 @@ export default function ProfileScreen() {
               />
             ))}
           </View>
+          {user.specificInterests ? (
+            <View className="mt-4">
+              <Text className="text-foreground font-body-semi text-sm mb-1">Specifics</Text>
+              <Text className="text-muted font-body text-sm leading-relaxed">
+                {user.specificInterests}
+              </Text>
+            </View>
+          ) : null}
         </View>
 
         {/* Edit Profile */}

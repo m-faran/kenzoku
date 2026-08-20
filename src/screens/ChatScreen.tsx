@@ -23,6 +23,7 @@ import {
   getInterestEmoji,
   ChatMessage,
 } from "../data/mockData";
+import { useUser } from "../context/UserContext";
 
 type Props = NativeStackScreenProps<ChatsStackParamList, "Chat">;
 
@@ -34,9 +35,11 @@ export default function ChatScreen({ route, navigation }: Props) {
   const [text, setText] = useState("");
   const listRef = useRef<FlatList>(null);
 
+  const { user } = useUser();
+
   if (!person) return null;
 
-  const shared = getSharedInterests(person.interests);
+  const shared = getSharedInterests(person.interests, user.interests);
 
   const send = () => {
     if (!text.trim()) return;

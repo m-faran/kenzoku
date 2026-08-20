@@ -5,14 +5,22 @@ import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../navigation/RootNavigator";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import { useUser } from "../context/UserContext";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProfileSetup">;
 
 export default function ProfileSetupScreen({ navigation }: Props) {
-  const [name, setName] = useState("");
-  const [bio, setBio] = useState("");
-  const [city, setCity] = useState("");
-  const [school, setSchool] = useState("");
+  const { user, updateUser } = useUser();
+  const [name, setName] = useState(user.name);
+  const [bio, setBio] = useState(user.bio);
+  const [motive, setMotive] = useState(user.motive);
+  const [city, setCity] = useState(user.city);
+  const [school, setSchool] = useState(user.school);
+
+  const handleContinue = () => {
+    updateUser({ name, bio, motive, city, school });
+    navigation.navigate("InterestSelection");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-surface">
@@ -70,6 +78,12 @@ export default function ProfileSetupScreen({ navigation }: Props) {
           numberOfLines={3}
         />
         <Input
+          label="Motive"
+          placeholder="Why are you joining? (e.g. 'Making friends', 'Networking')"
+          value={motive}
+          onChangeText={setMotive}
+        />
+        <Input
           label="City"
           placeholder="e.g. London, New York, Lagos"
           value={city}
@@ -85,7 +99,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
         <View className="mt-4">
           <Button
             label="Continue"
-            onPress={() => navigation.navigate("InterestSelection")}
+            onPress={handleContinue}
           />
         </View>
       </ScrollView>

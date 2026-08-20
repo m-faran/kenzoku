@@ -5,12 +5,30 @@ import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../navigation/RootNavigator";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import { useUser } from "../context/UserContext";
 
 type Props = NativeStackScreenProps<RootStackParamList, "SignUp">;
 
 export default function SignUpScreen({ navigation }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const { updateUser } = useUser();
+
+  const handleContinue = () => {
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    setError("");
+    updateUser({ email });
+    navigation.navigate("ProfileSetup");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-surface">
@@ -38,17 +56,34 @@ export default function SignUpScreen({ navigation }: Props) {
           onChangeText={setEmail}
         />
         <Input
-          label="Password"
+          label="Create Password"
           placeholder="At least 8 characters"
           secureTextEntry
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(text) => {
+            setPassword(text);
+            if (error) setError("");
+          }}
+        />
+        <Input
+          label="Confirm Password"
+          placeholder="Repeat your password"
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={(text) => {
+            setConfirmPassword(text);
+            if (error) setError("");
+          }}
         />
 
-        <View className="mt-2 mb-6">
+        {error ? (
+          <Text className="text-red-500 font-body text-sm mt-1">{error}</Text>
+        ) : null}
+
+        <View className={error ? "mt-3 mb-6" : "mt-2 mb-6"}>
           <Button
             label="Continue"
-            onPress={() => navigation.navigate("ProfileSetup")}
+            onPress={handleContinue}
           />
         </View>
 

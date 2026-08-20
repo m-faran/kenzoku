@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Pressable } from "react-native";
 import Avatar from "./Avatar";
 import { Person, ChatThread, getSharedInterests, getInterestLabel } from "../data/mockData";
+import { useUser } from "../context/UserContext";
 
 type Props = {
   person: Person;
@@ -10,7 +11,8 @@ type Props = {
 };
 
 export default function ChatRow({ person, thread, onPress }: Props) {
-  const shared = getSharedInterests(person.interests);
+  const { user } = useUser();
+  const shared = getSharedInterests(person.interests, user.interests);
 
   return (
     <Pressable

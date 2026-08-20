@@ -9,6 +9,7 @@ import {
   getInterestLabel,
   getInterestEmoji,
 } from "../data/mockData";
+import { useUser } from "../context/UserContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = Math.min(SCREEN_WIDTH - 32, 360);
@@ -29,7 +30,8 @@ export default function PersonCard({
   onPress,
   shadow = true,
 }: Props) {
-  const shared = getSharedInterests(person.interests);
+  const { user } = useUser();
+  const shared = getSharedInterests(person.interests, user.interests);
 
   return (
     <Pressable
