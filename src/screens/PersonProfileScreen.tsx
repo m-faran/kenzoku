@@ -21,6 +21,7 @@ import {
   getInterestEmoji,
 } from "../data/mockData";
 import { useUser } from "../context/UserContext";
+import { useNotifications } from "../context/NotificationContext";
 
 type Props = NativeStackScreenProps<DiscoverStackParamList, "PersonProfile">;
 
@@ -30,6 +31,7 @@ const PHOTO_HEIGHT = W * 1.05;
 export default function PersonProfileScreen({ route, navigation }: Props) {
   const person = getPersonById(route.params.personId);
   const { user } = useUser();
+  const { addNotification } = useNotifications();
   if (!person) return null;
 
   const shared = getSharedInterests(person.interests, user.interests);
@@ -130,7 +132,16 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
           {/* Connect */}
           <Button
             label={`Connect with ${person.name}`}
-            onPress={() => Alert.alert("Connected!", `You've sent a connection request to ${person.name}.`)}
+            onPress={() => {
+              addNotification({
+                type: "connection",
+                text: `You sent a connection request to ${person.name}`,
+                timestamp: "Just now",
+                read: false,
+                avatarUrl: person.photo,
+              });
+              Alert.alert("Connected!", `You've sent a connection request to ${person.name}.`);
+            }}
           />
 
           {/* Safety actions */}

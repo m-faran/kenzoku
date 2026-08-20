@@ -1,11 +1,13 @@
 import React from "react";
 import { View, Text, SectionList, SafeAreaView } from "react-native";
 import NotificationItem from "../components/NotificationItem";
-import { NOTIFICATIONS, Notification } from "../data/mockData";
+import { Notification } from "../data/mockData";
+import { useNotifications } from "../context/NotificationContext";
 
 export default function NotificationsScreen() {
-  const unread = NOTIFICATIONS.filter((n) => !n.read);
-  const read = NOTIFICATIONS.filter((n) => n.read);
+  const { notifications } = useNotifications();
+  const unread = notifications.filter((n) => !n.read);
+  const read = notifications.filter((n) => n.read);
 
   const sections = [
     ...(unread.length > 0 ? [{ title: "New", data: unread }] : []),

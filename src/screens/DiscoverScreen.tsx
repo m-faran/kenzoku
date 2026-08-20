@@ -1,22 +1,39 @@
-import React, { useState } from "react";
-import { View, Text, SafeAreaView, Dimensions } from "react-native";
+import React, { useState, useMemo } from "react";
+import { View, Text, SafeAreaView, Alert, Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { DiscoverStackParamList } from "../navigation/stacks/DiscoverStack";
 import PersonCard from "../components/PersonCard";
 import { PEOPLE } from "../data/mockData";
+import { rankPeopleByCompatibility } from "../data/matchingAlgorithm";
+import { useUser } from "../context/UserContext";
+import { useNotifications } from "../context/NotificationContext";
 
 type Nav = NativeStackNavigationProp<DiscoverStackParamList, "Discover">;
 
 export default function DiscoverScreen() {
   const navigation = useNavigation<Nav>();
+  const { user } = useUser();
+  const { addNotification } = useNotifications();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const person = PEOPLE[currentIndex % PEOPLE.length];
-  const nextPerson = PEOPLE[(currentIndex + 1) % PEOPLE.length];
+  const ranked = useMemo(
+    () => rankPeopleByCompatibility(PEOPLE, user.interests, user.specificInterests),
+    [user.interests, user.specificInterests]
+  );
+
+  const person = ranked[currentIndex % ranked.length];
 
   const handlePass = () => setCurrentIndex((i) => i + 1);
   const handleConnect = () => {
+    addNotification({
+      type: "connection",
+      text: `You sent a connection request to ${person.name}`,
+      timestamp: "Just now",
+      read: false,
+      avatarUrl: person.photo,
+    });
+    Alert.alert("Connected!", `You've sent a connection request to ${person.name}.`);
     setCurrentIndex((i) => i + 1);
   };
 

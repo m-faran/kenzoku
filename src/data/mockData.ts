@@ -84,6 +84,7 @@ export const PEOPLE: Person[] = [
     bio: "Street photographer chasing light. Film camera enthusiast.",
     photo:
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=800&fit=crop&auto=format",
+    specificInterests: "Street Photography, Film cameras, Jazz, Indie cinema",
     interests: ["photography", "film", "music", "books", "art"],
   },
   {
@@ -94,7 +95,7 @@ export const PEOPLE: Person[] = [
     bio: "Full-stack dev by day, Rust evangelist by night. Obsessed with systems programming.",
     photo:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&h=800&fit=crop&auto=format",
-    specificInterests: "Rust evangelist, systems programming",
+    specificInterests: "Solidity, Fullstack",
     interests: ["coding", "technology", "robotics", "chess"],
   },
   {
@@ -145,6 +146,7 @@ export const PEOPLE: Person[] = [
     bio: "Filmmaker working on my first feature. Love finding hidden gems in cinema.",
     photo:
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=600&h=800&fit=crop&auto=format",
+    specificInterests: "Indie cinema, Screenwriting, Music production",
     interests: ["film", "startups", "books", "art", "music"],
   },
   {
