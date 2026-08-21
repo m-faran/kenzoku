@@ -1,16 +1,32 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView, SafeAreaView } from "react-native";
+import { View, Text, Pressable, ScrollView, SafeAreaView, Alert } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../navigation/RootNavigator";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import { signIn, resetPassword } from "../lib/api/auth";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 export default function LoginScreen({ navigation }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      await signIn(email.trim(), password);
+      // AuthContext picks up the session change → RootNavigator auto-navigates to Main
+    } catch (e: any) {
+      setError(e.message ?? "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-surface">
@@ -41,16 +57,38 @@ export default function LoginScreen({ navigation }: Props) {
           placeholder="Your password"
           secureTextEntry
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(text) => {
+            setPassword(text);
+            if (error) setError("");
+          }}
         />
 
-        <Pressable className="mb-6 active:opacity-70">
+        {error ? (
+          <Text className="text-red-500 font-body text-sm mt-1 mb-2">{error}</Text>
+        ) : null}
+
+        <Pressable
+          className="mb-6 active:opacity-70"
+          onPress={async () => {
+            if (!email) {
+              Alert.alert("Error", "Please enter your email address first.");
+              return;
+            }
+            try {
+              await resetPassword(email.trim());
+              Alert.alert("Check Your Email", "A password reset link has been sent to your email address.");
+            } catch (e: any) {
+              Alert.alert("Error", e.message ?? "Failed to send reset email.");
+            }
+          }}
+        >
           <Text className="text-primary font-body-medium text-sm text-right">Forgot password?</Text>
         </Pressable>
 
         <Button
-          label="Log In"
-          onPress={() => navigation.replace("Main")}
+          label={loading ? "Logging in..." : "Log In"}
+          onPress={handleLogin}
+          disabled={loading}
         />
 
         <View className="flex-row items-center my-6">
@@ -59,6 +97,7 @@ export default function LoginScreen({ navigation }: Props) {
           <View className="flex-1 h-px bg-border" />
         </View>
 
+        {/* Google — deferred */}
         <Pressable className="flex-row items-center justify-center bg-white border border-border rounded-2xl py-4 gap-3 mb-8 active:opacity-80">
           <Text style={{ fontSize: 20 }}>🇬</Text>
           <Text className="text-foreground font-body-semi text-base">Continue with Google</Text>

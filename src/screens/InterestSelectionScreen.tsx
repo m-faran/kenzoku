@@ -20,7 +20,7 @@ import { useUser } from "../context/UserContext";
 type Props = NativeStackScreenProps<RootStackParamList, "InterestSelection">;
 
 export default function InterestSelectionScreen({ navigation }: Props) {
-  const { user, updateUser } = useUser();
+  const { user, updateUser, saveToDb } = useUser();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string[]>(user.interests || []);
   const [specificInterests, setSpecificInterests] = useState(user.specificInterests || "");
@@ -178,9 +178,17 @@ export default function InterestSelectionScreen({ navigation }: Props) {
           <Button
             label={selected.length > 0 ? `Continue with ${selected.length} interest${selected.length > 1 ? "s" : ""}` : "Continue"}
             onPress={() => {
-              const proceed = () => {
+              const proceed = async () => {
                 updateUser({ interests: selected, specificInterests });
-                navigation.replace("Main");
+                try {
+                  await saveToDb({ interests: selected, specificInterests });
+                } catch (e) {
+                  // non-blocking — profile saved locally either way
+                }
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "Main" }],
+                });
               };
 
               if (selected.length > 0 && specificInterests.trim() === "") {

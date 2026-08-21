@@ -3,18 +3,20 @@ import { View, Text, Pressable, ScrollView, SafeAreaView, Alert } from "react-na
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import SettingsRow from "../components/SettingsRow";
+import { useAuth } from "../context/AuthContext";
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
   const [pushNotifs, setPushNotifs] = useState(true);
   const [emailNotifs, setEmailNotifs] = useState(false);
+  const { signOut, user } = useAuth();
 
   const sections = [
     {
       title: "Account",
       items: [
         { icon: "person" as const, label: "Edit Profile", onPress: () => navigation.goBack() },
-        { icon: "mail" as const, label: "Email", value: "alex@example.com", onPress: () => {} },
+        { icon: "mail" as const, label: "Email", value: user?.email ?? "Not signed in", onPress: () => {} },
         { icon: "key" as const, label: "Change Password", onPress: () => {} },
       ],
     },
@@ -98,7 +100,7 @@ export default function SettingsScreen() {
           <Pressable
             onPress={() => Alert.alert("Log Out", "Are you sure?", [
               { text: "Cancel", style: "cancel" },
-              { text: "Log Out", style: "destructive" },
+              { text: "Log Out", style: "destructive", onPress: signOut },
             ])}
             className="bg-white rounded-2xl px-5 py-4 items-center active:opacity-80"
           >

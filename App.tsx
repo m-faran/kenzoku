@@ -19,8 +19,9 @@ import {
   Poppins_600SemiBold,
 } from "@expo-google-fonts/poppins";
 import RootNavigator from "./src/navigation/RootNavigator";
+import { AuthProvider } from "./src/context/AuthContext";
 import { UserProvider } from "./src/context/UserContext";
-import { NotificationProvider } from "./src/context/NotificationContext";
+import { QueryProvider } from "./src/context/QueryProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -51,14 +52,16 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView className="flex-1 bg-surface" edges={["top"]} onLayout={onLayoutRootView}>
-        <UserProvider>
-          <NotificationProvider>
-            <NavigationContainer>
-              <StatusBar style="auto" />
-              <RootNavigator />
-            </NavigationContainer>
-          </NotificationProvider>
-        </UserProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <UserProvider>
+              <NavigationContainer>
+                <StatusBar style="auto" />
+                <RootNavigator />
+              </NavigationContainer>
+            </UserProvider>
+          </AuthProvider>
+        </QueryProvider>
       </SafeAreaView>
     </SafeAreaProvider>
   );

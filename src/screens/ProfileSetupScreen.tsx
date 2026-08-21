@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView, SafeAreaView } from "react-native";
+import { View, Text, Pressable, ScrollView, SafeAreaView, Alert } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../navigation/RootNavigator";
@@ -10,16 +10,25 @@ import { useUser } from "../context/UserContext";
 type Props = NativeStackScreenProps<RootStackParamList, "ProfileSetup">;
 
 export default function ProfileSetupScreen({ navigation }: Props) {
-  const { user, updateUser } = useUser();
+  const { user, updateUser, saveToDb } = useUser();
   const [name, setName] = useState(user.name);
   const [bio, setBio] = useState(user.bio);
   const [motive, setMotive] = useState(user.motive);
   const [city, setCity] = useState(user.city);
   const [school, setSchool] = useState(user.school);
+  const [saving, setSaving] = useState(false);
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     updateUser({ name, bio, motive, city, school });
-    navigation.navigate("InterestSelection");
+    setSaving(true);
+    try {
+      await saveToDb({ name, bio, motive, city, school });
+      navigation.navigate("InterestSelection");
+    } catch (e: any) {
+      Alert.alert("Error", e.message ?? "Failed to save profile");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -31,9 +40,11 @@ export default function ProfileSetupScreen({ navigation }: Props) {
       >
         {/* Header */}
         <View className="flex-row items-center mb-8">
-          <Pressable onPress={() => navigation.goBack()} className="mr-4 active:opacity-70">
-            <Ionicons name="arrow-back" size={24} color="#18181B" />
-          </Pressable>
+          {user.name ? (
+            <Pressable onPress={() => navigation.goBack()} className="mr-4 active:opacity-70">
+              <Ionicons name="arrow-back" size={24} color="#18181B" />
+            </Pressable>
+          ) : null}
           <View className="flex-1">
             <Text className="text-foreground font-display text-2xl">Your profile</Text>
             <Text className="text-muted font-body text-sm">Tell people a little about yourself</Text>
@@ -98,8 +109,9 @@ export default function ProfileSetupScreen({ navigation }: Props) {
 
         <View className="mt-4">
           <Button
-            label="Continue"
+            label={saving ? "Saving..." : "Continue"}
             onPress={handleContinue}
+            disabled={saving}
           />
         </View>
       </ScrollView>

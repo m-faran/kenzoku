@@ -17,12 +17,14 @@ import SettingsRow from "../components/SettingsRow";
 import Button from "../components/Button";
 import { getInterestLabel, getInterestEmoji } from "../data/mockData";
 import { useUser } from "../context/UserContext";
+import { useAuth } from "../context/AuthContext";
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, "Profile">;
 
 export default function ProfileScreen() {
   const navigation = useNavigation<Nav>();
   const { user } = useUser();
+  const { signOut } = useAuth();
 
   const menuItems = [
     {
@@ -134,7 +136,7 @@ export default function ProfileScreen() {
           <Pressable
             onPress={() => Alert.alert("Log Out", "Are you sure?", [
               { text: "Cancel", style: "cancel" },
-              { text: "Log Out", style: "destructive" },
+              { text: "Log Out", style: "destructive", onPress: signOut },
             ])}
             className="bg-white rounded-2xl px-5 py-4 items-center active:opacity-80"
           >

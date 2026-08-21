@@ -18,7 +18,7 @@ import { useUser } from "../context/UserContext";
 
 export default function EditProfileScreen() {
   const navigation = useNavigation();
-  const { user, updateUser } = useUser();
+  const { user, updateUser, saveToDb } = useUser();
   const [name, setName] = useState(user.name);
   const [bio, setBio] = useState(user.bio);
   const [motive, setMotive] = useState(user.motive);
@@ -41,10 +41,15 @@ export default function EditProfileScreen() {
           </Pressable>
           <Text className="text-foreground font-body-semi text-base">Edit Profile</Text>
           <Pressable
-            onPress={() => {
+            onPress={async () => {
               updateUser({ name, bio, motive, specificInterests, city, school });
-              Alert.alert("Saved", "Your profile has been updated.");
-              navigation.goBack();
+              try {
+                await saveToDb({ name, bio, motive, specificInterests, city, school });
+                Alert.alert("Saved", "Your profile has been updated.");
+                navigation.goBack();
+              } catch (e: any) {
+                Alert.alert("Error", e.message ?? "Failed to save profile");
+              }
             }}
             className="active:opacity-70"
           >
@@ -101,7 +106,7 @@ export default function EditProfileScreen() {
         <View className="mb-6">
           <View className="flex-row items-center justify-between mb-3">
             <Text className="text-foreground font-body-semi text-sm">Interests</Text>
-            <Pressable className="active:opacity-70">
+            <Pressable className="active:opacity-70" onPress={() => navigation.navigate("InterestSelection" as never)}>
               <Text className="text-primary font-body-medium text-sm">Edit</Text>
             </Pressable>
           </View>
@@ -117,11 +122,6 @@ export default function EditProfileScreen() {
           </View>
         </View>
 
-        <Button label="Save Changes" onPress={() => {
-          updateUser({ name, bio, motive, specificInterests, city, school });
-          Alert.alert("Saved", "Your profile has been updated.");
-          navigation.goBack();
-        }} />
       </ScrollView>
     </SafeAreaView>
   );

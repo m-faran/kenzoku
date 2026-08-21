@@ -6,22 +6,25 @@ import {
   Pressable,
   Dimensions,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
 import { DiscoverStackParamList } from "../navigation/stacks/DiscoverStack";
 import InterestChip from "../components/InterestChip";
 import Button from "../components/Button";
 import {
-  getPersonById,
   getSharedInterests,
   getInterestLabel,
   getInterestEmoji,
 } from "../data/mockData";
 import { useUser } from "../context/UserContext";
-import { useNotifications } from "../context/NotificationContext";
+import { useSendConnection } from "../hooks/useConnections";
+import { fetchMyProfile, ProfileRow } from "../lib/api/profiles";
+import { supabase } from "../lib/supabase";
 
 type Props = NativeStackScreenProps<DiscoverStackParamList, "PersonProfile">;
 
@@ -29,13 +32,43 @@ const { width: W } = Dimensions.get("window");
 const PHOTO_HEIGHT = W * 1.05;
 
 export default function PersonProfileScreen({ route, navigation }: Props) {
-  const person = getPersonById(route.params.personId);
   const { user } = useUser();
-  const { addNotification } = useNotifications();
-  if (!person) return null;
+  const sendConnection = useSendConnection();
 
-  const shared = getSharedInterests(person.interests, user.interests);
-  const otherInterests = person.interests.filter((id) => !shared.includes(id));
+  const { data: person, isLoading } = useQuery({
+    queryKey: ["profile", route.params.personId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", route.params.personId)
+        .single();
+      if (error) throw error;
+      return data as ProfileRow;
+    },
+  });
+
+  if (isLoading || !person) {
+    return (
+      <View className="flex-1 bg-white items-center justify-center">
+        <ActivityIndicator size="large" color="#7C3AED" />
+      </View>
+    );
+  }
+
+  const shared = getSharedInterests(person.interests ?? [], user.interests);
+  const personInterests = person.interests ?? [];
+
+  const handleConnect = () => {
+    sendConnection.mutate(person.id, {
+      onSuccess: () => {
+        Alert.alert("Connected!", `You've sent a connection request to ${person.name}.`);
+      },
+      onError: (err: any) => {
+        Alert.alert("Error", err.message ?? "Failed to send connection request");
+      },
+    });
+  };
 
   return (
     <View className="flex-1 bg-white">
@@ -47,7 +80,7 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
         {/* Photo header */}
         <View style={{ height: PHOTO_HEIGHT }}>
           <Image
-            source={{ uri: person.photo }}
+            source={{ uri: person.photo_url }}
             style={{ width: W, height: PHOTO_HEIGHT }}
             contentFit="cover"
           />
@@ -71,7 +104,7 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
           {/* Name overlay */}
           <View className="absolute bottom-6 left-6 right-6">
             <Text className="text-white font-display text-3xl mb-0.5">
-              {person.name}, {person.age}
+              {person.name}{person.age ? `, ${person.age}` : ""}
             </Text>
             <Text className="text-white/80 font-body text-base">
               📍 {person.city}
@@ -87,12 +120,12 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
           </Text>
 
           {/* Motive */}
-          {person.motive && (
+          {person.motive ? (
             <View className="bg-accent/10 border border-accent/20 rounded-2xl p-4 mb-6 items-center">
               <Text className="text-accent font-body-semi text-xs text-center uppercase tracking-wider mb-1">Motive</Text>
               <Text className="text-foreground font-body text-sm text-center">"{person.motive}"</Text>
             </View>
-          )}
+          ) : null}
 
           {/* Shared interests */}
           {shared.length > 0 && (
@@ -119,7 +152,7 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
             All interests
           </Text>
           <View className="flex-row flex-wrap gap-2 mb-8">
-            {person.interests.map((id) => (
+            {personInterests.map((id) => (
               <InterestChip
                 key={id}
                 label={getInterestLabel(id)}
@@ -132,16 +165,8 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
           {/* Connect */}
           <Button
             label={`Connect with ${person.name}`}
-            onPress={() => {
-              addNotification({
-                type: "connection",
-                text: `You sent a connection request to ${person.name}`,
-                timestamp: "Just now",
-                read: false,
-                avatarUrl: person.photo,
-              });
-              Alert.alert("Connected!", `You've sent a connection request to ${person.name}.`);
-            }}
+            onPress={handleConnect}
+            disabled={sendConnection.isPending}
           />
 
           {/* Safety actions */}

@@ -1,11 +1,11 @@
 import React from "react";
-import { View, Text, SectionList, SafeAreaView } from "react-native";
+import { View, Text, SectionList, SafeAreaView, ActivityIndicator } from "react-native";
 import NotificationItem from "../components/NotificationItem";
-import { Notification } from "../data/mockData";
-import { useNotifications } from "../context/NotificationContext";
+import { useNotifications } from "../hooks/useNotifications";
+import { NotificationRow } from "../lib/api/notifications";
 
 export default function NotificationsScreen() {
-  const { notifications } = useNotifications();
+  const { data: notifications = [], isLoading } = useNotifications();
   const unread = notifications.filter((n) => !n.read);
   const read = notifications.filter((n) => n.read);
 
@@ -20,8 +20,13 @@ export default function NotificationsScreen() {
         <Text className="text-foreground font-display text-2xl">Notifications</Text>
       </View>
 
-      <SectionList
-        sections={sections}
+      {isLoading ? (
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="#7C3AED" />
+        </View>
+      ) : (
+        <SectionList
+          sections={sections}
         keyExtractor={(item) => item.id}
         className="flex-1 bg-white"
         renderSectionHeader={({ section: { title } }) => (
@@ -40,7 +45,8 @@ export default function NotificationsScreen() {
           </View>
         }
         showsVerticalScrollIndicator={false}
-      />
+        />
+      )}
     </SafeAreaView>
   );
 }
