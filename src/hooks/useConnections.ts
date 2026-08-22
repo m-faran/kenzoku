@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { sendConnection, fetchConnections, fetchPendingForMe, respondToConnection } from "../lib/api/connections";
+import { sendConnection, fetchConnections, fetchPendingForMe, respondToConnection, fetchConnectionStatus } from "../lib/api/connections";
 import { insertNotification } from "../lib/api/notifications";
 import { useAuth } from "../context/AuthContext";
 import { useUser } from "../context/UserContext";
@@ -55,6 +55,17 @@ export function useRespondToConnection() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["connections"] });
       qc.invalidateQueries({ queryKey: ["pending-connections"] });
+      qc.invalidateQueries({ queryKey: ["channels"] });
+      qc.invalidateQueries({ queryKey: ["connection-status"] });
     },
+  });
+}
+
+export function useConnectionStatus(otherUserId: string) {
+  const { user: authUser } = useAuth();
+  return useQuery({
+    queryKey: ["connection-status", authUser?.id, otherUserId],
+    queryFn: () => fetchConnectionStatus(authUser!.id, otherUserId),
+    enabled: !!authUser?.id && !!otherUserId,
   });
 }

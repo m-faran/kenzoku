@@ -136,7 +136,10 @@ export default function SignUpScreen({ navigation }: Props) {
         </View>
 
         {/* Google — deferred */}
-        <Pressable className="flex-row items-center justify-center bg-white border border-border rounded-2xl py-4 gap-3 mb-8 active:opacity-80">
+        <Pressable 
+          onPress={() => Alert.alert("Notice", "Google service unavailable at the moment, please enter credentials manually.")}
+          className="flex-row items-center justify-center bg-white border border-border rounded-2xl py-4 gap-3 mb-8 active:opacity-80"
+        >
           <Text style={{ fontSize: 20 }}>🇬</Text>
           <Text className="text-foreground font-body-semi text-base">Continue with Google</Text>
         </Pressable>

@@ -22,7 +22,8 @@ import {
   getInterestEmoji,
 } from "../data/mockData";
 import { useUser } from "../context/UserContext";
-import { useSendConnection } from "../hooks/useConnections";
+import { useSendConnection, useConnectionStatus } from "../hooks/useConnections";
+import { useBlockStatus, useToggleBlock } from "../hooks/useBlocks";
 import { fetchMyProfile, ProfileRow } from "../lib/api/profiles";
 import { supabase } from "../lib/supabase";
 
@@ -34,6 +35,9 @@ const PHOTO_HEIGHT = W * 1.05;
 export default function PersonProfileScreen({ route, navigation }: Props) {
   const { user } = useUser();
   const sendConnection = useSendConnection();
+  const { data: connectionStatus } = useConnectionStatus(route.params.personId);
+  const { data: isBlocked } = useBlockStatus(route.params.personId);
+  const { mutate: toggleBlock } = useToggleBlock(route.params.personId, !!isBlocked);
 
   const { data: person, isLoading } = useQuery({
     queryKey: ["profile", route.params.personId],
@@ -48,6 +52,8 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
     },
   });
 
+  const [didRequestConnection, setDidRequestConnection] = React.useState(false);
+
   if (isLoading || !person) {
     return (
       <View className="flex-1 bg-white items-center justify-center">
@@ -60,15 +66,21 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
   const personInterests = person.interests ?? [];
 
   const handleConnect = () => {
+    if (sendConnection.isPending || didRequestConnection) return;
+    setDidRequestConnection(true);
+
     sendConnection.mutate(person.id, {
       onSuccess: () => {
         Alert.alert("Connected!", `You've sent a connection request to ${person.name}.`);
       },
       onError: (err: any) => {
+        setDidRequestConnection(false);
         Alert.alert("Error", err.message ?? "Failed to send connection request");
       },
     });
   };
+
+  const isActuallyPending = connectionStatus === "pending" || didRequestConnection;
 
   return (
     <View className="flex-1 bg-white">
@@ -163,11 +175,25 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
           </View>
 
           {/* Connect */}
-          <Button
-            label={`Connect with ${person.name}`}
-            onPress={handleConnect}
-            disabled={sendConnection.isPending}
-          />
+          {(connectionStatus === "none" || connectionStatus === "rejected") && !isActuallyPending && (
+            <Button
+              label={`Connect with ${person.name}`}
+              onPress={handleConnect}
+              disabled={sendConnection.isPending || didRequestConnection}
+            />
+          )}
+
+          {isActuallyPending && (
+            <View className="bg-surface border border-border rounded-xl py-3.5 items-center">
+              <Text className="text-foreground font-body-semi text-base">Request Pending</Text>
+            </View>
+          )}
+
+          {(connectionStatus === "accepted") && !isActuallyPending && (
+            <View className="bg-surface border border-border rounded-xl py-3.5 items-center">
+              <Text className="text-foreground font-body-semi text-base">You are connected</Text>
+            </View>
+          )}
 
           {/* Safety actions */}
           <View className="flex-row justify-center gap-6 mt-5">
@@ -179,10 +205,23 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
             </Pressable>
             <Text className="text-border">•</Text>
             <Pressable
-              onPress={() => Alert.alert("Blocked", `${person.name} has been blocked.`)}
+              onPress={() => {
+                Alert.alert(
+                  "Options",
+                  isBlocked ? `Unblock ${person.name}?` : `Block ${person.name}?`,
+                  [
+                    { text: "Cancel", style: "cancel" },
+                    { 
+                      text: isBlocked ? "Unblock" : "Block", 
+                      style: isBlocked ? "default" : "destructive",
+                      onPress: () => toggleBlock()
+                    }
+                  ]
+                );
+              }}
               className="active:opacity-70"
             >
-              <Text className="text-muted font-body text-sm">Block</Text>
+              <Text className="text-muted font-body text-sm">{isBlocked ? "Unblock" : "Block"}</Text>
             </Pressable>
           </View>
         </View>

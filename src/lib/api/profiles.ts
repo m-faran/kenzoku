@@ -47,13 +47,28 @@ export async function fetchDiscoverProfiles(userId: string): Promise<ProfileRow[
     .neq("id", userId);
   if (pErr) throw pErr;
 
-  // Fetch IDs of people we've already sent a connection to (any status)
-  const { data: sent, error: sErr } = await supabase
+  // Fetch connections in both directions
+  const { data: connections, error: cErr } = await supabase
     .from("connections")
-    .select("receiver_id")
-    .eq("sender_id", userId);
-  if (sErr) throw sErr;
+    .select("sender_id, receiver_id")
+    .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`);
+  if (cErr) throw cErr;
 
-  const sentIds = new Set((sent ?? []).map((c) => c.receiver_id));
-  return (profiles ?? []).filter((p) => !sentIds.has(p.id));
+  // Fetch blocked users (RLS allows seeing who we blocked)
+  const { data: blocks, error: bErr } = await supabase
+    .from("blocks")
+    .select("blocked_id")
+    .eq("blocker_id", userId);
+  if (bErr) throw bErr;
+
+  const excludeIds = new Set<string>();
+  
+  for (const c of connections ?? []) {
+    excludeIds.add(c.sender_id === userId ? c.receiver_id : c.sender_id);
+  }
+  for (const b of blocks ?? []) {
+    excludeIds.add(b.blocked_id);
+  }
+
+  return (profiles ?? []).filter((p) => !excludeIds.has(p.id));
 }

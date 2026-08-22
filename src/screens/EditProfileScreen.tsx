@@ -15,16 +15,38 @@ import Button from "../components/Button";
 import InterestChip from "../components/InterestChip";
 import { getInterestLabel, getInterestEmoji } from "../data/mockData";
 import { useUser } from "../context/UserContext";
+import { useAuth } from "../context/AuthContext";
+import { pickAndUploadAvatar } from "../lib/api/storage";
 
 export default function EditProfileScreen() {
   const navigation = useNavigation();
   const { user, updateUser, saveToDb } = useUser();
+  const { user: authUser } = useAuth();
   const [name, setName] = useState(user.name);
   const [bio, setBio] = useState(user.bio);
   const [motive, setMotive] = useState(user.motive);
   const [specificInterests, setSpecificInterests] = useState(user.specificInterests);
   const [city, setCity] = useState(user.city);
   const [school, setSchool] = useState(user.school);
+  const [photo, setPhoto] = useState(user.photo);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  const handlePickPhoto = async () => {
+    if (!authUser?.id) return;
+    setUploadingPhoto(true);
+    try {
+      const url = await pickAndUploadAvatar(authUser.id);
+      if (url) {
+        setPhoto(url);
+        updateUser({ photo: url });
+        await saveToDb({ photo: url });
+      }
+    } catch (e: any) {
+      Alert.alert("Upload Failed", e.message ?? "Could not upload photo");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-surface">
@@ -59,16 +81,18 @@ export default function EditProfileScreen() {
 
         {/* Avatar */}
         <View className="items-center mb-8">
-          <Pressable className="active:opacity-80">
+          <Pressable className="active:opacity-80" onPress={handlePickPhoto} disabled={uploadingPhoto}>
             <Avatar
-              uri={user.photo}
+              uri={photo}
               size={88}
             />
             <View className="absolute bottom-0 right-0 bg-primary w-7 h-7 rounded-full items-center justify-center border-2 border-white">
               <Ionicons name="camera" size={13} color="#fff" />
             </View>
           </Pressable>
-          <Text className="text-primary font-body-medium text-sm mt-2">Change photo</Text>
+          <Text className="text-primary font-body-medium text-sm mt-2">
+            {uploadingPhoto ? "Uploading..." : "Change photo"}
+          </Text>
         </View>
 
         <Input label="Name" value={name} onChangeText={setName} placeholder="Your name" />

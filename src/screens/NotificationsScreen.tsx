@@ -1,18 +1,25 @@
 import React from "react";
 import { View, Text, SectionList, SafeAreaView, ActivityIndicator } from "react-native";
 import NotificationItem from "../components/NotificationItem";
+import PendingConnectionItem from "../components/PendingConnectionItem";
 import { useNotifications } from "../hooks/useNotifications";
+import { usePendingConnections } from "../hooks/useConnections";
 import { NotificationRow } from "../lib/api/notifications";
 
 export default function NotificationsScreen() {
-  const { data: notifications = [], isLoading } = useNotifications();
+  const { data: notifications = [], isLoading: loadingNotifs } = useNotifications();
+  const { data: pending = [], isLoading: loadingPending } = usePendingConnections();
+  
   const unread = notifications.filter((n) => !n.read);
   const read = notifications.filter((n) => n.read);
 
   const sections = [
-    ...(unread.length > 0 ? [{ title: "New", data: unread }] : []),
-    ...(read.length > 0 ? [{ title: "Earlier", data: read }] : []),
+    ...(pending.length > 0 ? [{ title: "Pending Requests", data: pending, isPending: true }] : []),
+    ...(unread.length > 0 ? [{ title: "New", data: unread, isPending: false }] : []),
+    ...(read.length > 0 ? [{ title: "Earlier", data: read, isPending: false }] : []),
   ];
+
+  const isLoading = loadingNotifs || loadingPending;
 
   return (
     <SafeAreaView className="flex-1 bg-surface">
@@ -36,7 +43,12 @@ export default function NotificationsScreen() {
             </Text>
           </View>
         )}
-        renderItem={({ item }) => <NotificationItem notification={item} />}
+        renderItem={({ item, section }) => {
+          if ((section as any).isPending) {
+            return <PendingConnectionItem connection={item} />;
+          }
+          return <NotificationItem notification={item} />;
+        }}
         ItemSeparatorComponent={() => <View className="h-px bg-border mx-5" />}
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center py-20">

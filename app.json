@@ -21,7 +21,14 @@
     },
     "newArchEnabled": true,
     "plugins": [
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos for your profile picture.",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera for your profile picture."
+        }
+      ]
     ]
   }
 }

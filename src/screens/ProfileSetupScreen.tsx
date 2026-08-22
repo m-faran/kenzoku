@@ -5,18 +5,41 @@ import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../navigation/RootNavigator";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import Avatar from "../components/Avatar";
 import { useUser } from "../context/UserContext";
+import { useAuth } from "../context/AuthContext";
+import { pickAndUploadAvatar } from "../lib/api/storage";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProfileSetup">;
 
 export default function ProfileSetupScreen({ navigation }: Props) {
   const { user, updateUser, saveToDb } = useUser();
+  const { user: authUser } = useAuth();
   const [name, setName] = useState(user.name);
   const [bio, setBio] = useState(user.bio);
   const [motive, setMotive] = useState(user.motive);
   const [city, setCity] = useState(user.city);
   const [school, setSchool] = useState(user.school);
+  const [photo, setPhoto] = useState(user.photo);
   const [saving, setSaving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  const handlePickPhoto = async () => {
+    if (!authUser?.id) return;
+    setUploadingPhoto(true);
+    try {
+      const url = await pickAndUploadAvatar(authUser.id);
+      if (url) {
+        setPhoto(url);
+        updateUser({ photo: url });
+        await saveToDb({ photo: url });
+      }
+    } catch (e: any) {
+      Alert.alert("Upload Failed", e.message ?? "Could not upload photo");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
 
   const handleContinue = async () => {
     updateUser({ name, bio, motive, city, school });
@@ -63,15 +86,21 @@ export default function ProfileSetupScreen({ navigation }: Props) {
 
         {/* Avatar Upload */}
         <View className="items-center mb-8">
-          <Pressable className="active:opacity-80">
-            <View className="w-24 h-24 bg-primary/10 rounded-full items-center justify-center border-2 border-dashed border-primary/40">
-              <Ionicons name="person" size={36} color="#A78BFA" />
-            </View>
+          <Pressable className="active:opacity-80" onPress={handlePickPhoto} disabled={uploadingPhoto}>
+            {photo && photo !== "" ? (
+              <Avatar uri={photo} size={96} />
+            ) : (
+              <View className="w-24 h-24 bg-primary/10 rounded-full items-center justify-center border-2 border-dashed border-primary/40">
+                <Ionicons name="person" size={36} color="#A78BFA" />
+              </View>
+            )}
             <View className="absolute bottom-0 right-0 bg-primary w-7 h-7 rounded-full items-center justify-center border-2 border-white">
-              <Ionicons name="add" size={16} color="#fff" />
+              <Ionicons name={photo ? "camera" : "add"} size={16} color="#fff" />
             </View>
           </Pressable>
-          <Text className="text-muted font-body text-sm mt-3">Add a profile photo</Text>
+          <Text className="text-primary font-body-medium text-sm mt-3">
+            {uploadingPhoto ? "Uploading..." : photo ? "Change photo" : "Add a profile photo"}
+          </Text>
         </View>
 
         <Input

@@ -8,6 +8,7 @@ import SignUpScreen from "../screens/SignUpScreen";
 import LoginScreen from "../screens/LoginScreen";
 import ProfileSetupScreen from "../screens/ProfileSetupScreen";
 import InterestSelectionScreen from "../screens/InterestSelectionScreen";
+import PersonProfileScreen from "../screens/PersonProfileScreen";
 import MainTabs from "./MainTabs";
 
 export type RootStackParamList = {
@@ -16,6 +17,7 @@ export type RootStackParamList = {
   Login: undefined;
   ProfileSetup: undefined;
   InterestSelection: undefined;
+  PersonProfile: { personId: string };
   Main: undefined;
 };
 
@@ -40,6 +42,7 @@ export default function RootNavigator() {
           {/* Allow navigating to profile setup from Main if profile is incomplete */}
           <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
           <Stack.Screen name="InterestSelection" component={InterestSelectionScreen} />
+          <Stack.Screen name="PersonProfile" component={PersonProfileScreen} />
         </>
       ) : (
         <>

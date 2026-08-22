@@ -5,7 +5,7 @@ import ChatScreen from "../../screens/ChatScreen";
 
 export type ChatsStackParamList = {
   Chats: undefined;
-  Chat: { personId: string };
+  Chat: { channelId: string; personId: string };
 };
 
 const Stack = createNativeStackNavigator<ChatsStackParamList>();
