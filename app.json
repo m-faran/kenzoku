@@ -3,7 +3,7 @@
     "name": "Kenzoku",
     "slug": "kenzoku",
     "version": "1.0.0",
-    "sdkVersion": "52",
+    "sdkVersion": "52.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "assetBundlePatterns": [
