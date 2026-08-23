@@ -50,7 +50,11 @@ export default function SignUpScreen({ navigation }: Props) {
       }
 
       if (!data.session) {
-        Alert.alert("Success", "Please check your inbox for email verification!");
+        Alert.alert(
+          "Verify your email first",
+          "We've sent a verification link to your email. Please click the link to verify your account before logging in.",
+          [{ text: "OK", onPress: () => navigation.navigate("Login") }]
+        );
       }
       // If there IS a session, AuthContext will automatically redirect to Main!
     } catch (e: any) {
@@ -128,21 +132,7 @@ export default function SignUpScreen({ navigation }: Props) {
           />
         </View>
 
-        {/* Divider */}
-        <View className="flex-row items-center mb-6">
-          <View className="flex-1 h-px bg-border" />
-          <Text className="text-muted font-body text-sm mx-4">or</Text>
-          <View className="flex-1 h-px bg-border" />
-        </View>
 
-        {/* Google — deferred */}
-        <Pressable 
-          onPress={() => Alert.alert("Notice", "Google service unavailable at the moment, please enter credentials manually.")}
-          className="flex-row items-center justify-center bg-white border border-border rounded-2xl py-4 gap-3 mb-8 active:opacity-80"
-        >
-          <Text style={{ fontSize: 20 }}>🇬</Text>
-          <Text className="text-foreground font-body-semi text-base">Continue with Google</Text>
-        </Pressable>
 
         {/* Link to Login */}
         <Pressable

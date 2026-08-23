@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView, SafeAreaView, Alert } from "react-native";
+import { View, Text, Pressable, ScrollView, SafeAreaView, Alert, Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import SettingsRow from "../components/SettingsRow";
@@ -52,25 +52,7 @@ export default function PrivacySafetyScreen() {
           />
         </View>
 
-        {/* Safety */}
-        <Text className="text-muted font-body-semi text-xs uppercase tracking-wider px-5 mb-2">
-          Safety
-        </Text>
-        <View className="bg-white rounded-2xl mx-4 mb-4 overflow-hidden">
-          <SettingsRow
-            icon="ban"
-            label="Blocked Users"
-            iconColor="#EF4444"
-            onPress={() => {}}
-          />
-          <View className="h-px bg-border ml-16" />
-          <SettingsRow
-            icon="flag"
-            label="Report a User"
-            iconColor="#EF4444"
-            onPress={() => Alert.alert("Report", "Select a user to report from your connections.")}
-          />
-        </View>
+
 
         {/* Danger zone */}
         <Text className="text-muted font-body-semi text-xs uppercase tracking-wider px-5 mb-2">
@@ -86,10 +68,14 @@ export default function PrivacySafetyScreen() {
             onPress={() =>
               Alert.alert(
                 "Delete Account",
-                "This will permanently delete your account and all your data. This action cannot be undone.",
+                "This will start the account deletion process. We will open your email client to send a deletion request.",
                 [
                   { text: "Cancel", style: "cancel" },
-                  { text: "Delete", style: "destructive" },
+                  { 
+                    text: "Continue", 
+                    style: "destructive",
+                    onPress: () => Linking.openURL('mailto:kenzoku@codekin.xyz?subject=Account Deletion Request')
+                  },
                 ]
               )
             }

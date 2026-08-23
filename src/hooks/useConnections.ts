@@ -17,14 +17,8 @@ export function useSendConnection() {
     onSuccess: () => {
       // Refresh discover list (removes the person we just connected with)
       qc.invalidateQueries({ queryKey: ["discover"] });
-      // Also insert a notification for ourselves confirming the send
-      if (authUser?.id) {
-        insertNotification(authUser.id, {
-          type: "connection",
-          text: "Connection request sent!",
-        }).catch(() => {}); // fire-and-forget
-        qc.invalidateQueries({ queryKey: ["notifications"] });
-      }
+      // Refresh notifications to show the new sender notification
+      qc.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }

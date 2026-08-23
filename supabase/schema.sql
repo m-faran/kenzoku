@@ -43,7 +43,14 @@ alter table connections enable row level security;
 create policy "Users see own connections" on connections
   for select using (auth.uid() = sender_id or auth.uid() = receiver_id);
 create policy "Users can send connections" on connections
-  for insert with check (auth.uid() = sender_id);
+  for insert with check (
+    auth.uid() = sender_id and
+    not exists (
+      select 1 from blocks b
+      where (b.blocker_id = sender_id and b.blocked_id = receiver_id)
+         or (b.blocker_id = receiver_id and b.blocked_id = sender_id)
+    )
+  );
 create policy "Receiver can update status" on connections
   for update using (auth.uid() = receiver_id);
 
@@ -64,7 +71,14 @@ alter table notifications enable row level security;
 create policy "Users see own notifications" on notifications
   for select using (auth.uid() = user_id);
 create policy "Authenticated can insert" on notifications
-  for insert with check (auth.role() = 'authenticated');
+  for insert with check (
+    auth.role() = 'authenticated' and
+    exists (
+      select 1 from connections c
+      where (c.sender_id = auth.uid() and c.receiver_id = notifications.user_id)
+         or (c.receiver_id = auth.uid() and c.sender_id = notifications.user_id)
+    )
+  );
 create policy "Users can update own notifications" on notifications
   for update using (auth.uid() = user_id);
 
@@ -82,7 +96,14 @@ alter table chat_channels enable row level security;
 create policy "Users see own channels" on chat_channels
   for select using (auth.uid() = user1_id or auth.uid() = user2_id);
 create policy "Users can create channels" on chat_channels
-  for insert with check (auth.uid() = user1_id or auth.uid() = user2_id);
+  for insert with check (
+    (auth.uid() = user1_id or auth.uid() = user2_id) and
+    not exists (
+      select 1 from blocks b
+      where (b.blocker_id = user1_id and b.blocked_id = user2_id)
+         or (b.blocker_id = user2_id and b.blocked_id = user1_id)
+    )
+  );
 
 -- 5. Messages
 create table if not exists messages (
@@ -158,3 +179,20 @@ create policy "Users can block others" on blocks
 
 create policy "Users can unblock others" on blocks
   for delete using (auth.uid() = blocker_id);
+
+-- 8. User Reports
+create table if not exists reports (
+  id uuid primary key default gen_random_uuid(),
+  reporter_id uuid not null references profiles(id) on delete cascade,
+  reported_id uuid not null references profiles(id) on delete cascade,
+  reason text not null default 'Inappropriate behavior',
+  created_at timestamptz default now()
+);
+
+alter table reports enable row level security;
+
+create policy "Users can insert reports" on reports
+  for insert with check (auth.uid() = reporter_id);
+
+create policy "Users can view their own reports" on reports
+  for select using (auth.uid() = reporter_id);

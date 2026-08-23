@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Find Your People",
-    "slug": "find-your-people",
+    "name": "Kenzoku",
+    "slug": "kenzoku",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
@@ -10,10 +10,10 @@
     ],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.findyourpeople.app"
+      "bundleIdentifier": "com.kenzoku.app"
     },
     "android": {
-      "package": "com.findyourpeople.app"
+      "package": "com.kenzoku.app"
     },
     "web": {
       "bundler": "metro",

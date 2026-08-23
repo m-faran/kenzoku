@@ -202,12 +202,7 @@ export default function ChatScreen({ route, navigation }: Props) {
           </View>
         ) : (
           <View className="flex-row items-center px-4 py-3 bg-white border-t border-border gap-2">
-            <Pressable
-              onPress={() => Alert.alert("Attachments", "Photo\nImage\nFile")}
-              className="active:opacity-70"
-            >
-              <Ionicons name="attach" size={24} color="#71717A" />
-            </Pressable>
+
             <View className="flex-1 bg-surface border border-border rounded-2xl px-4 py-2.5">
               <TextInput
                 className="text-foreground font-body text-base"

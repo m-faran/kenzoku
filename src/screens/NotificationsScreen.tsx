@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, SectionList, SafeAreaView, ActivityIndicator } from "react-native";
+import React, { useState, useCallback } from "react";
+import { View, Text, SectionList, SafeAreaView, ActivityIndicator, RefreshControl } from "react-native";
 import NotificationItem from "../components/NotificationItem";
 import PendingConnectionItem from "../components/PendingConnectionItem";
 import { useNotifications } from "../hooks/useNotifications";
@@ -7,8 +7,16 @@ import { usePendingConnections } from "../hooks/useConnections";
 import { NotificationRow } from "../lib/api/notifications";
 
 export default function NotificationsScreen() {
-  const { data: notifications = [], isLoading: loadingNotifs } = useNotifications();
-  const { data: pending = [], isLoading: loadingPending } = usePendingConnections();
+  const { data: notifications = [], isLoading: loadingNotifs, refetch: refetchNotifs } = useNotifications();
+  const { data: pending = [], isLoading: loadingPending, refetch: refetchPending } = usePendingConnections();
+  
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([refetchNotifs(), refetchPending()]);
+    setRefreshing(false);
+  }, [refetchNotifs, refetchPending]);
   
   const unread = notifications.filter((n) => !n.read);
   const read = notifications.filter((n) => n.read);
@@ -27,7 +35,7 @@ export default function NotificationsScreen() {
         <Text className="text-foreground font-display text-2xl">Notifications</Text>
       </View>
 
-      {isLoading ? (
+      {isLoading && !refreshing ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#7C3AED" />
         </View>
@@ -36,6 +44,9 @@ export default function NotificationsScreen() {
           sections={sections}
         keyExtractor={(item) => item.id}
         className="flex-1 bg-white"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#7C3AED" />
+        }
         renderSectionHeader={({ section: { title } }) => (
           <View className="px-5 py-2.5 bg-surface border-b border-border">
             <Text className="text-muted font-body-semi text-xs uppercase tracking-wider">

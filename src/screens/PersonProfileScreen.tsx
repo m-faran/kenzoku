@@ -22,10 +22,11 @@ import {
   getInterestEmoji,
 } from "../data/mockData";
 import { useUser } from "../context/UserContext";
-import { useSendConnection, useConnectionStatus } from "../hooks/useConnections";
+import { useAuth } from "../context/AuthContext";
 import { useBlockStatus, useToggleBlock } from "../hooks/useBlocks";
 import { fetchMyProfile, ProfileRow } from "../lib/api/profiles";
 import { supabase } from "../lib/supabase";
+import { useConnectionStatus, useSendConnection } from "../hooks/useConnections";
 
 type Props = NativeStackScreenProps<DiscoverStackParamList, "PersonProfile">;
 
@@ -34,6 +35,7 @@ const PHOTO_HEIGHT = W * 1.05;
 
 export default function PersonProfileScreen({ route, navigation }: Props) {
   const { user } = useUser();
+  const { user: authUser } = useAuth();
   const sendConnection = useSendConnection();
   const { data: connectionStatus } = useConnectionStatus(route.params.personId);
   const { data: isBlocked } = useBlockStatus(route.params.personId);
@@ -53,6 +55,7 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
   });
 
   const [didRequestConnection, setDidRequestConnection] = React.useState(false);
+  const [reporting, setReporting] = React.useState(false);
 
   if (isLoading || !person) {
     return (
@@ -78,6 +81,37 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
         Alert.alert("Error", err.message ?? "Failed to send connection request");
       },
     });
+  };
+
+  const handleReport = () => {
+    if (reporting || !person || !authUser) return;
+    Alert.alert(
+      "Report User",
+      `Are you sure you want to report ${person.name}?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Report",
+          style: "destructive",
+          onPress: async () => {
+            setReporting(true);
+            try {
+              const { error } = await supabase.from('reports').insert({
+                reporter_id: authUser.id,
+                reported_id: person.id,
+                reason: "Inappropriate behavior"
+              });
+              if (error) throw error;
+              Alert.alert("Reported", "Thanks for keeping the community safe.");
+            } catch (e: any) {
+              Alert.alert("Error", e.message ?? "Failed to send report.");
+            } finally {
+              setReporting(false);
+            }
+          }
+        }
+      ]
+    );
   };
 
   const isActuallyPending = connectionStatus === "pending" || didRequestConnection;
@@ -198,7 +232,7 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
           {/* Safety actions */}
           <View className="flex-row justify-center gap-6 mt-5">
             <Pressable
-              onPress={() => Alert.alert("Report", "Thanks for keeping the community safe.")}
+              onPress={handleReport}
               className="active:opacity-70"
             >
               <Text className="text-muted font-body text-sm">Report</Text>
@@ -211,8 +245,8 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
                   isBlocked ? `Unblock ${person.name}?` : `Block ${person.name}?`,
                   [
                     { text: "Cancel", style: "cancel" },
-                    { 
-                      text: isBlocked ? "Unblock" : "Block", 
+                    {
+                      text: isBlocked ? "Unblock" : "Block",
                       style: isBlocked ? "default" : "destructive",
                       onPress: () => toggleBlock()
                     }

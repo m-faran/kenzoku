@@ -28,35 +28,14 @@ export default function ProfileScreen() {
 
   const menuItems = [
     {
-      icon: "star" as const,
-      label: "My Interests",
-      onPress: () => {},
-    },
-    {
       icon: "settings" as const,
       label: "Settings",
       onPress: () => navigation.navigate("Settings"),
     },
     {
-      icon: "notifications" as const,
-      label: "Notifications",
-      onPress: () => {},
-    },
-    {
       icon: "shield-checkmark" as const,
       label: "Privacy & Safety",
       onPress: () => navigation.navigate("PrivacySafety"),
-    },
-    {
-      icon: "ban" as const,
-      label: "Blocked People",
-      iconColor: "#EF4444",
-      onPress: () => {},
-    },
-    {
-      icon: "help-circle" as const,
-      label: "Help & Support",
-      onPress: () => {},
     },
   ];
 
@@ -121,7 +100,6 @@ export default function ProfileScreen() {
               <SettingsRow
                 icon={item.icon}
                 label={item.label}
-                iconColor={item.iconColor ?? "#7C3AED"}
                 onPress={item.onPress}
               />
               {i < menuItems.length - 1 && (

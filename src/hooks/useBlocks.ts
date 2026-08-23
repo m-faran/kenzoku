@@ -26,6 +26,7 @@ export function useToggleBlock(otherUserId: string, currentlyBlocked: boolean) {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["block-status", authUser?.id, otherUserId] });
+      qc.invalidateQueries({ queryKey: ["discover"] });
     },
   });
 }

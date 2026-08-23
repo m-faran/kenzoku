@@ -15,9 +15,7 @@ export default function SettingsScreen() {
     {
       title: "Account",
       items: [
-        { icon: "person" as const, label: "Edit Profile", onPress: () => navigation.goBack() },
-        { icon: "mail" as const, label: "Email", value: user?.email ?? "Not signed in", onPress: () => {} },
-        { icon: "key" as const, label: "Change Password", onPress: () => {} },
+        { icon: "mail" as const, label: "Email", value: user?.email ?? "Not signed in" },
       ],
     },
     {
@@ -40,19 +38,9 @@ export default function SettingsScreen() {
       ],
     },
     {
-      title: "Privacy",
-      items: [
-        { icon: "shield-checkmark" as const, label: "Privacy & Safety", onPress: () => {} },
-        { icon: "ban" as const, label: "Blocked Users", iconColor: "#EF4444", onPress: () => {} },
-      ],
-    },
-    {
       title: "App",
       items: [
-        { icon: "language" as const, label: "Language", value: "English", onPress: () => {} },
-        { icon: "help-circle" as const, label: "Help & Support", onPress: () => {} },
-        { icon: "document-text" as const, label: "Terms of Service", onPress: () => {} },
-        { icon: "lock-closed" as const, label: "Privacy Policy", onPress: () => {} },
+        { icon: "language" as const, label: "Language", value: "English" },
       ],
     },
   ];

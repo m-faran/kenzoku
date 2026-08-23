@@ -91,20 +91,7 @@ export default function LoginScreen({ navigation }: Props) {
           disabled={loading}
         />
 
-        <View className="flex-row items-center my-6">
-          <View className="flex-1 h-px bg-border" />
-          <Text className="text-muted font-body text-sm mx-4">or</Text>
-          <View className="flex-1 h-px bg-border" />
-        </View>
 
-        {/* Google — deferred */}
-        <Pressable 
-          onPress={() => Alert.alert("Notice", "Google service unavailable at the moment, please enter credentials manually.")}
-          className="flex-row items-center justify-center bg-white border border-border rounded-2xl py-4 gap-3 mb-8 active:opacity-80"
-        >
-          <Text style={{ fontSize: 20 }}>🇬</Text>
-          <Text className="text-foreground font-body-semi text-base">Continue with Google</Text>
-        </Pressable>
 
         <Pressable
           onPress={() => navigation.navigate("SignUp")}

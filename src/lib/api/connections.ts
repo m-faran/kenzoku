@@ -14,7 +14,13 @@ export async function sendConnection(senderId: string, receiverId: string) {
     user_id: receiverId,
     type: "connection" as const,
     text: "Someone sent you a connection request",
-    // We'll fill avatar_url from the sender's profile
+  });
+
+  // Also create a notification for the sender
+  await supabase.from("notifications").insert({
+    user_id: senderId,
+    type: "connection" as const,
+    text: "Connection request sent!",
   });
 
   return data;
