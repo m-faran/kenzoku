@@ -13,7 +13,10 @@
       "bundleIdentifier": "com.kenzoku.app"
     },
     "android": {
-      "package": "com.kenzoku.app"
+      "package": "com.kenzoku.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -29,6 +32,12 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera for your profile picture."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b58f6f94-a636-4a6e-829c-d075934bd149"
+      }
+    },
+    "owner": "faranw3be"
   }
 }

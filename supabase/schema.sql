@@ -73,10 +73,14 @@ create policy "Users see own notifications" on notifications
 create policy "Authenticated can insert" on notifications
   for insert with check (
     auth.role() = 'authenticated' and
-    exists (
-      select 1 from connections c
-      where (c.sender_id = auth.uid() and c.receiver_id = notifications.user_id)
-         or (c.receiver_id = auth.uid() and c.sender_id = notifications.user_id)
+    (
+      notifications.user_id = auth.uid() -- Allow inserting for yourself
+      or
+      exists (
+        select 1 from connections c
+        where (c.sender_id = auth.uid() and c.receiver_id = notifications.user_id)
+           or (c.receiver_id = auth.uid() and c.sender_id = notifications.user_id)
+      )
     )
   );
 create policy "Users can update own notifications" on notifications
