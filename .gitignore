@@ -31,3 +31,6 @@ logs/
 
 plans/
 .expo/
+
+android/
+ios/
