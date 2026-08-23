@@ -3,6 +3,7 @@
     "name": "Kenzoku",
     "slug": "kenzoku",
     "version": "1.0.0",
+    "sdkVersion": "52",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "assetBundlePatterns": [
@@ -14,6 +15,10 @@
     },
     "android": {
       "package": "com.kenzoku.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ]
