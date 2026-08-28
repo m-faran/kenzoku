@@ -8,6 +8,8 @@ jobs:
   build:
     name: Build Android
     runs-on: ubuntu-latest # GitHub provides this Linux machine for free
+    env:
+      GRADLE_OPTS: "-Dorg.gradle.jvmargs='-Xmx4096m -XX:MaxMetaspaceSize=1024m'"
 
     steps:
       - name: Checkout repository
