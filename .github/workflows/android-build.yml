@@ -1,0 +1,50 @@
+name: Build Android App (Free)
+
+# This allows you to trigger the build manually from the GitHub Actions tab
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Android
+    runs-on: ubuntu-latest # GitHub provides this Linux machine for free
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x 
+          cache: 'npm' # Use 'yarn' if you use yarn
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Expo and EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Android app
+        # The --local flag forces it to compile on the GitHub runner
+        run: eas build --platform android --profile production --local --non-interactive
+        env:
+          # Tell EAS exactly what to name the final output file
+          EAS_LOCAL_BUILD_ARTIFACT_PATH: app-release.aab
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-app-bundle
+          path: app-release.aab
+          retention-days: 7
