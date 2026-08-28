@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView, SafeAreaView, Alert } from "react-native";
+import { View, Text, Pressable, ScrollView, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../navigation/RootNavigator";
@@ -12,9 +12,12 @@ import { pickAndUploadAvatar } from "../lib/api/storage";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProfileSetup">;
 
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 export default function ProfileSetupScreen({ navigation }: Props) {
   const { user, updateUser, saveToDb } = useUser();
   const { user: authUser } = useAuth();
+  const insets = useSafeAreaInsets();
   const [name, setName] = useState(user.name);
   const [bio, setBio] = useState(user.bio);
   const [motive, setMotive] = useState(user.motive);
@@ -55,10 +58,13 @@ export default function ProfileSetupScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <KeyboardAvoidingView 
+      className="flex-1 bg-surface"
+      behavior="padding"
+    >
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 24 }}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: Math.max(24, insets.bottom + 24) }}
         keyboardShouldPersistTaps="handled"
       >
         {/* Header */}
@@ -144,6 +150,6 @@ export default function ProfileSetupScreen({ navigation }: Props) {
           />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }

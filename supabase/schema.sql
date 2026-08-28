@@ -28,6 +28,23 @@ create policy "Users can update own profile" on profiles
 create policy "Users can insert own profile" on profiles
   for insert with check (auth.uid() = id);
 
+-- Trigger to auto-create profile on signup
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, age)
+  values (
+    new.id,
+    (new.raw_user_meta_data->>'age')::int
+  );
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create or replace trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
 -- 2. Connections
 create table if not exists connections (
   id uuid primary key default gen_random_uuid(),

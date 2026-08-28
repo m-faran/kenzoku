@@ -4,9 +4,10 @@ import {
   Text,
   Pressable,
   ScrollView,
-  SafeAreaView,
   TextInput,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,8 +20,11 @@ import { useUser } from "../context/UserContext";
 
 type Props = NativeStackScreenProps<RootStackParamList, "InterestSelection">;
 
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 export default function InterestSelectionScreen({ navigation }: Props) {
   const { user, updateUser, saveToDb } = useUser();
+  const insets = useSafeAreaInsets();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string[]>(user.interests || []);
   const [specificInterests, setSpecificInterests] = useState(user.specificInterests || "");
@@ -51,7 +55,10 @@ export default function InterestSelectionScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <KeyboardAvoidingView 
+      className="flex-1 bg-surface"
+      behavior="padding"
+    >
       <View className="flex-1">
         {/* Header */}
         <View className="px-6 pt-6 pb-4">
@@ -174,7 +181,10 @@ export default function InterestSelectionScreen({ navigation }: Props) {
         </ScrollView>
 
         {/* CTA */}
-        <View className="px-6 pb-6 pt-3 bg-surface border-t border-border">
+        <View 
+          className="px-6 pt-3 bg-surface border-t border-border"
+          style={{ paddingBottom: Math.max(24, insets.bottom + 12) }}
+        >
           <Button
             label={selected.length > 0 ? `Continue with ${selected.length} interest${selected.length > 1 ? "s" : ""}` : "Continue"}
             onPress={() => {
@@ -217,6 +227,6 @@ export default function InterestSelectionScreen({ navigation }: Props) {
           />
         </View>
       </View>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }

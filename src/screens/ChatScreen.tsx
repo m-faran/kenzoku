@@ -5,7 +5,6 @@ import {
   FlatList,
   Pressable,
   TextInput,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   Alert,
@@ -74,10 +73,10 @@ export default function ChatScreen({ route, navigation }: Props) {
     : messages;
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <KeyboardAvoidingView
         className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior="padding"
       >
         {/* Header */}
         <View className="flex-row items-center px-4 py-3 border-b border-border bg-white">
@@ -224,6 +223,6 @@ export default function ChatScreen({ route, navigation }: Props) {
           </View>
         )}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }

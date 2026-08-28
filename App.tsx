@@ -1,10 +1,11 @@
-import "./global.css";
+import './global.css';
 
-import React, { useCallback, useEffect } from "react";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
-import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from 'react';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { NavigationContainer } from '@react-navigation/native';
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
+
 import {
   useFonts,
   Nunito_400Regular,
@@ -12,17 +13,21 @@ import {
   Nunito_600SemiBold,
   Nunito_700Bold,
   Nunito_800ExtraBold,
-} from "@expo-google-fonts/nunito";
+} from '@expo-google-fonts/nunito';
+
 import {
   Poppins_400Regular,
   Poppins_500Medium,
   Poppins_600SemiBold,
-} from "@expo-google-fonts/poppins";
-import RootNavigator from "./src/navigation/RootNavigator";
-import { AuthProvider } from "./src/context/AuthContext";
-import { UserProvider } from "./src/context/UserContext";
-import { QueryProvider } from "./src/context/QueryProvider";
+} from '@expo-google-fonts/poppins';
 
+import RootNavigator from './src/navigation/RootNavigator';
+import { AuthProvider } from './src/context/AuthContext';
+import { UserProvider } from './src/context/UserContext';
+import { QueryProvider } from './src/context/QueryProvider';
+import { View, StatusBar } from 'react-native';
+
+// Keep the native splash screen visible while fonts load.
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -37,13 +42,11 @@ export default function App() {
     Poppins_600SemiBold,
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useEffect(() => {
     if (fontsLoaded || fontError) {
-      await SplashScreen.hideAsync();
+      SplashScreen.hideAsync();
     }
   }, [fontsLoaded, fontError]);
-
-  console.log("[App] fontsLoaded:", fontsLoaded, "fontError:", fontError);
 
   if (!fontsLoaded && !fontError) {
     return null;
@@ -51,17 +54,23 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView className="flex-1 bg-surface" edges={["top"]} onLayout={onLayoutRootView}>
-        <QueryProvider>
-          <AuthProvider>
-            <UserProvider>
-              <NavigationContainer>
-                <StatusBar style="auto" />
-                <RootNavigator />
-              </NavigationContainer>
-            </UserProvider>
-          </AuthProvider>
-        </QueryProvider>
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: '#F5F3FF' }}
+        className="flex-1 bg-surface"
+        edges={['top']}
+      >
+        <View style={{ flex: 1, paddingTop: 12 }}>
+          <QueryProvider>
+            <AuthProvider>
+              <UserProvider>
+                <NavigationContainer>
+                  <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
+                  <RootNavigator />
+                </NavigationContainer>
+              </UserProvider>
+            </AuthProvider>
+          </QueryProvider>
+        </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );

@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   Pressable,
-  SafeAreaView,
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -40,7 +39,7 @@ export default function ProfileScreen() {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <View className="flex-1 bg-surface">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View className="items-center px-6 pt-8 pb-6">
@@ -122,6 +121,6 @@ export default function ProfileScreen() {
           </Pressable>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

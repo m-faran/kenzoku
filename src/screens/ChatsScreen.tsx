@@ -3,7 +3,6 @@ import {
   View,
   Text,
   FlatList,
-  SafeAreaView,
   TextInput,
   ActivityIndicator,
 } from "react-native";
@@ -27,7 +26,7 @@ export default function ChatsScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <View className="flex-1 bg-surface">
       {/* Header */}
       <View className="px-5 pt-4 pb-3">
         <Text className="text-foreground font-display text-2xl mb-4">Chats</Text>
@@ -76,6 +75,6 @@ export default function ChatsScreen() {
           className="flex-1 bg-white"
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 }

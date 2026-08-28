@@ -4,8 +4,9 @@ import {
   Text,
   Pressable,
   ScrollView,
-  SafeAreaView,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -49,7 +50,10 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <KeyboardAvoidingView 
+      className="flex-1 bg-surface"
+      behavior="padding"
+    >
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
@@ -147,6 +151,6 @@ export default function EditProfileScreen() {
         </View>
 
       </ScrollView>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }

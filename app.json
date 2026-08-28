@@ -3,46 +3,53 @@
     "name": "Kenzoku",
     "slug": "kenzoku",
     "version": "1.0.0",
-    "sdkVersion": "52.0.0",
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "plugins": [
+      "expo-status-bar",
+      "expo-font",
+      "expo-image",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F5F3FF",
+          "image": "./assets/splash.png",
+          "imageWidth": 200
+        }
+      ]
+    ],
     "orientation": "portrait",
-    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.kenzoku.app"
+      "supportsTablet": true
     },
     "android": {
-      "package": "com.kenzoku.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "package": "com.kenzoku.app",
+      "softwareKeyboardLayoutMode": "pan"
     },
-    "web": {
-      "bundler": "metro",
-      "output": "single"
-    },
-    "newArchEnabled": true,
-    "plugins": [
-      "expo-asset",
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos for your profile picture.",
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera for your profile picture."
-        }
-      ]
-    ],
     "extra": {
       "eas": {
         "projectId": "b58f6f94-a636-4a6e-829c-d075934bd149"
       }
     },
-    "owner": "faranw3be"
+    "owner": "faranw3be",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b58f6f94-a636-4a6e-829c-d075934bd149"
+    }
   }
 }

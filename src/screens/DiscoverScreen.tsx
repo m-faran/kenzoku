@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, SafeAreaView, Alert, ActivityIndicator } from "react-native";
+import { View, Text, Alert, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { DiscoverStackParamList } from "../navigation/stacks/DiscoverStack";
@@ -26,22 +26,22 @@ export default function DiscoverScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-surface items-center justify-center">
+      <View className="flex-1 bg-surface items-center justify-center">
         <ActivityIndicator size="large" color="#7C3AED" />
         <Text className="text-muted font-body text-sm mt-3">Finding your people...</Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (ranked.length === 0) {
     return (
-      <SafeAreaView className="flex-1 bg-surface items-center justify-center px-8">
+      <View className="flex-1 bg-surface items-center justify-center px-8">
         <Text style={{ fontSize: 48 }} className="mb-4">🔍</Text>
         <Text className="text-foreground font-display text-xl text-center mb-2">No one to discover yet</Text>
         <Text className="text-muted font-body text-sm text-center">
           Check back later — new people join every day!
         </Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -62,7 +62,7 @@ export default function DiscoverScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <View className="flex-1 bg-surface">
       <View className="flex-1 px-4 pt-4">
         {/* Header */}
         <View className="px-2 mb-6">
@@ -95,6 +95,6 @@ export default function DiscoverScreen() {
           />
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

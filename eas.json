@@ -1,19 +1,26 @@
 {
   "cli": {
-    "version": ">= 7.0.0"
+    "version": ">= 22.2.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "preview"
     },
     "production": {
-      "android": {
-        "buildType": "app-bundle"
-      }
+      "node": "22.23.1",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://sgqmgblldgydzyyxderm.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNncW1nYmxsZGd5ZHp5eXhkZXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTc3MjMsImV4cCI6MjEwMjgzMzcyM30.lvfQEPbQZqJOBIs3LgBrmiVZhjXJf7c-HMHi3zdKL88"
+      },
+      "channel": "production"
     }
   },
   "submit": {

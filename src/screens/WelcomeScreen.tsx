@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Pressable, SafeAreaView, Image } from "react-native";
+import { View, Text, Pressable, Image } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/RootNavigator";
 import Button from "../components/Button";
@@ -8,7 +8,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Welcome">;
 
 export default function WelcomeScreen({ navigation }: Props) {
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <View className="flex-1 bg-surface">
       <View className="flex-1 px-8 justify-center py-8">
         {/* Logo */}
         <View className="items-center mb-10">
@@ -43,6 +43,6 @@ export default function WelcomeScreen({ navigation }: Props) {
           </Pressable>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

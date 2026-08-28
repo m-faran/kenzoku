@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, SectionList, SafeAreaView, ActivityIndicator, RefreshControl } from "react-native";
+import { View, Text, SectionList, ActivityIndicator, RefreshControl } from "react-native";
 import NotificationItem from "../components/NotificationItem";
 import PendingConnectionItem from "../components/PendingConnectionItem";
 import { useNotifications } from "../hooks/useNotifications";
@@ -30,7 +30,7 @@ export default function NotificationsScreen() {
   const isLoading = loadingNotifs || loadingPending;
 
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <View className="flex-1 bg-surface">
       <View className="px-5 pt-4 pb-3">
         <Text className="text-foreground font-display text-2xl">Notifications</Text>
       </View>
@@ -70,6 +70,6 @@ export default function NotificationsScreen() {
         showsVerticalScrollIndicator={false}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 }

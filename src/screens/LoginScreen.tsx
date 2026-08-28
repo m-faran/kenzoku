@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, ScrollView, SafeAreaView, Alert } from "react-native";
+import { View, Text, Pressable, ScrollView, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../navigation/RootNavigator";
@@ -9,11 +9,14 @@ import { signIn, resetPassword } from "../lib/api/auth";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 export default function LoginScreen({ navigation }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const handleLogin = async () => {
     setError("");
@@ -29,10 +32,13 @@ export default function LoginScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-surface">
+    <KeyboardAvoidingView 
+      className="flex-1 bg-surface"
+      behavior="padding"
+    >
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 24 }}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: Math.max(24, insets.bottom + 24) }}
         keyboardShouldPersistTaps="handled"
       >
         <Pressable onPress={() => navigation.goBack()} className="mb-6 active:opacity-70">
@@ -103,6 +109,6 @@ export default function LoginScreen({ navigation }: Props) {
           </Text>
         </Pressable>
       </ScrollView>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }

@@ -16,8 +16,11 @@ export type MainTabsParamList = {
 };
 
 const Tab = createBottomTabNavigator<MainTabsParamList>();
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function MainTabs() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -28,8 +31,8 @@ export default function MainTabs() {
           backgroundColor: "#fff",
           borderTopColor: "#E4E4E7",
           borderTopWidth: 1,
-          height: 80,
-          paddingBottom: 16,
+          height: 64 + insets.bottom,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 16,
           paddingTop: 10,
         },
         tabBarLabelStyle: {
