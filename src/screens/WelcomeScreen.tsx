@@ -14,7 +14,8 @@ export default function WelcomeScreen({ navigation }: Props) {
         <View className="items-center mb-10">
           <Image
             source={require("../../assets/kenzoku_logo.png")}
-            className="w-56 h-56 rounded-3xl mb-4"
+            style={{ width: 140, height: 140 }}
+            className="rounded-3xl mb-4"
             resizeMode="contain"
           />
           <Text className="text-primary font-display text-4xl tracking-tight">

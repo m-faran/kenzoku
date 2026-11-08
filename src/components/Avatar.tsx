@@ -17,13 +17,15 @@ export default function Avatar({ uri, size = 48, online = false }: Props) {
           width: size,
           height: size,
           borderRadius: size / 2,
-          backgroundColor: "#A78BFA",
+          backgroundColor: "#EAE5D9",
+          borderWidth: 1,
+          borderColor: "#111111",
         }}
         contentFit="cover"
       />
       {online && (
         <View
-          className="absolute bg-online border-2 border-white rounded-full"
+          className="absolute bg-online border-2 border-card rounded-full"
           style={{
             width: size * 0.27,
             height: size * 0.27,

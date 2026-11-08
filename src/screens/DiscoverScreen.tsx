@@ -27,25 +27,50 @@ export default function DiscoverScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-surface items-center justify-center">
-        <ActivityIndicator size="large" color="#7C3AED" />
-        <Text className="text-muted font-body text-sm mt-3">Finding your people...</Text>
+        <ActivityIndicator size="large" color="#FF3B1D" />
+        <Text className="text-muted font-body-semi text-[11px] uppercase tracking-[2px] mt-4">
+          Indexing kindred profiles...
+        </Text>
       </View>
     );
   }
 
   if (ranked.length === 0) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center px-8">
-        <Text style={{ fontSize: 48 }} className="mb-4">🔍</Text>
-        <Text className="text-foreground font-display text-xl text-center mb-2">No one to discover yet</Text>
-        <Text className="text-muted font-body text-sm text-center">
-          Check back later — new people join every day!
-        </Text>
+      <View className="flex-1 bg-surface justify-between px-6 py-10">
+        <View className="flex-row items-center justify-between border-b border-border pb-3">
+          <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+            KENZOKU
+          </Text>
+          <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[2px]">
+            00 MATCHES
+          </Text>
+        </View>
+
+        <View>
+          <Text
+            className="text-ink font-display uppercase"
+            style={{ fontSize: 56, lineHeight: 52, letterSpacing: -2 }}
+          >
+            QUIET{"\n"}HORIZON
+          </Text>
+          <Text className="text-muted font-body text-[13px] leading-[20px] mt-4 max-w-[280px]">
+            No new profiles match your current passion index yet. Check back soon as new members join.
+          </Text>
+        </View>
+
+        <View className="border-t border-border pt-4 flex-row items-center justify-between">
+          <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[1.8px]">
+            STATUS: STANDBY
+          </Text>
+          <View className="w-2 h-2 bg-primary" />
+        </View>
       </View>
     );
   }
 
-  const person = ranked[currentIndex % ranked.length];
+  const activeIdx = currentIndex % ranked.length;
+  const person = ranked[activeIdx];
 
   const handlePass = () => setCurrentIndex((i) => i + 1);
   const handleConnect = () => {
@@ -63,37 +88,41 @@ export default function DiscoverScreen() {
 
   return (
     <View className="flex-1 bg-surface">
-      <View className="flex-1 px-4 pt-4">
-        {/* Header */}
-        <View className="px-2 mb-6">
-          <Text className="text-foreground font-display text-2xl">Find Your People</Text>
-          <Text className="text-muted font-body text-sm mt-0.5">
-            People who share your interests
+      {/* Top editorial bar — tiny scale */}
+      <View className="flex-row items-center justify-between px-4 py-3 border-b border-border">
+        <View className="flex-row items-center gap-2">
+          <View className="w-2 h-2 bg-primary" />
+          <Text className="text-ink font-body-bold text-[11px] uppercase tracking-[2.2px]">
+            KENZOKU
           </Text>
         </View>
+        <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[1.8px]">
+          {user.city ? `${user.city} · ` : ""}
+          {String(activeIdx + 1).padStart(2, "0")} / {String(ranked.length).padStart(2, "0")}
+        </Text>
+      </View>
 
-        {/* Stacked cards */}
-        <View className="flex-1 items-center">
-          {/* Background card (next) */}
+      {/* Deck stage */}
+      <View className="flex-1 items-center justify-center px-3.5 py-2">
+        {/* Background depth plane (next card shadow sheet) */}
+        {ranked.length > 1 && (
           <View
-            className="absolute rounded-3xl bg-white"
+            className="absolute bg-paper-sunken border border-ink"
             style={{
-              top: 10,
-              width: "92%",
-              height: "90%",
-              opacity: 0.5,
-              transform: [{ scale: 0.96 }],
+              width: "94%",
+              height: "92%",
+              transform: [{ translateY: 10 }, { translateX: 6 }],
             }}
           />
+        )}
 
-          {/* Main card */}
-          <PersonCard
-            person={person}
-            onConnect={handleConnect}
-            onPass={handlePass}
-            onPress={() => navigation.navigate("PersonProfile", { personId: person.id })}
-          />
-        </View>
+        {/* Main 3-plane card */}
+        <PersonCard
+          person={person}
+          onConnect={handleConnect}
+          onPass={handlePass}
+          onPress={() => navigation.navigate("PersonProfile", { personId: person.id })}
+        />
       </View>
     </View>
   );

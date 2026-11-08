@@ -18,7 +18,7 @@ type Props = {
 export default function SettingsRow({
   label,
   icon,
-  iconColor = "#7C3AED",
+  iconColor = "#111111",
   value,
   toggle,
   toggleValue,
@@ -30,34 +30,33 @@ export default function SettingsRow({
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center px-5 py-4 bg-white active:bg-surface"
+      className="flex-row items-center px-5 py-4 bg-card active:bg-paper-sunken"
     >
       {icon && (
-        <View
-          className="w-8 h-8 rounded-lg items-center justify-center mr-3"
-          style={{ backgroundColor: iconColor + "18" }}
-        >
-          <Ionicons name={icon} size={17} color={iconColor} />
+        <View className="w-7 h-7 border border-border bg-surface items-center justify-center mr-3.5">
+          <Ionicons name={icon} size={15} color={destructive ? "#D92D20" : iconColor} />
         </View>
       )}
       <Text
-        className={`flex-1 font-body-medium text-base ${destructive ? "text-danger" : "text-foreground"}`}
+        className={`flex-1 font-body-semi text-xs uppercase tracking-[1.5px] ${
+          destructive ? "text-danger" : "text-ink"
+        }`}
       >
         {label}
       </Text>
       {value && !toggle && (
-        <Text className="text-muted font-body text-sm mr-2">{value}</Text>
+        <Text className="text-muted font-body text-xs mr-2">{value}</Text>
       )}
       {toggle && (
         <Switch
           value={toggleValue}
           onValueChange={onToggle}
-          trackColor={{ false: "#E4E4E7", true: "#7C3AED" }}
-          thumbColor="#fff"
+          trackColor={{ false: "#DCD6CA", true: "#FF3B1D" }}
+          thumbColor="#FCFBF7"
         />
       )}
       {!toggle && showChevron && !destructive && (
-        <Ionicons name="chevron-forward" size={16} color="#A1A1AA" />
+        <Ionicons name="arrow-forward" size={14} color="#111111" />
       )}
     </Pressable>
   );

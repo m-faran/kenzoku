@@ -25,22 +25,25 @@ export default function MainTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: "#7C3AED",
-        tabBarInactiveTintColor: "#A1A1AA",
+        tabBarActiveTintColor: "#FF3B1D",
+        tabBarInactiveTintColor: "#68645D",
         tabBarStyle: {
-          backgroundColor: "#fff",
-          borderTopColor: "#E4E4E7",
+          backgroundColor: "#F6F3EC",
+          borderTopColor: "#DCD6CA",
           borderTopWidth: 1,
-          height: 64 + insets.bottom,
-          paddingBottom: insets.bottom > 0 ? insets.bottom : 16,
-          paddingTop: 10,
+          height: 62 + insets.bottom,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 14,
+          paddingTop: 8,
+          elevation: 0,
         },
         tabBarLabelStyle: {
-          fontFamily: "Poppins_500Medium",
-          fontSize: 11,
+          fontFamily: "SpaceGrotesk_600SemiBold",
+          fontSize: 10,
+          letterSpacing: 1.4,
+          textTransform: "uppercase",
           marginTop: 2,
         },
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ focused, color }) => {
           const icons: Record<string, [string, string]> = {
             DiscoverTab: ["compass", "compass-outline"],
             ChatsTab: ["chatbubbles", "chatbubbles-outline"],
@@ -49,7 +52,7 @@ export default function MainTabs() {
           };
           const [active, inactive] = icons[route.name] ?? ["ellipse", "ellipse-outline"];
           const iconName = focused ? active : inactive;
-          return <Ionicons name={iconName as any} size={size} color={color} />;
+          return <Ionicons name={iconName as any} size={20} color={color} />;
         },
       })}
     >

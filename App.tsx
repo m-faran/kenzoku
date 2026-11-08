@@ -32,6 +32,12 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({
+    Syne_700Bold: require('./assets/fonts/Syne_700Bold.ttf'),
+    Syne_800ExtraBold: require('./assets/fonts/Syne_800ExtraBold.ttf'),
+    SpaceGrotesk_400Regular: require('./assets/fonts/SpaceGrotesk_400Regular.ttf'),
+    SpaceGrotesk_500Medium: require('./assets/fonts/SpaceGrotesk_500Medium.ttf'),
+    SpaceGrotesk_600SemiBold: require('./assets/fonts/SpaceGrotesk_600SemiBold.ttf'),
+    SpaceGrotesk_700Bold: require('./assets/fonts/SpaceGrotesk_700Bold.ttf'),
     Nunito_400Regular,
     Nunito_500Medium,
     Nunito_600SemiBold,
@@ -55,11 +61,11 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        style={{ flex: 1, backgroundColor: '#F5F3FF' }}
+        style={{ flex: 1, backgroundColor: '#F6F3EC' }}
         className="flex-1 bg-surface"
         edges={['top']}
       >
-        <View style={{ flex: 1, paddingTop: 12 }}>
+        <View style={{ flex: 1, paddingTop: 4 }}>
           <QueryProvider>
             <AuthProvider>
               <UserProvider>

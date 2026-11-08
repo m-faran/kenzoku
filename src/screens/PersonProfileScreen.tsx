@@ -19,19 +19,17 @@ import Button from "../components/Button";
 import {
   getSharedInterests,
   getInterestLabel,
-  getInterestEmoji,
 } from "../data/mockData";
 import { useUser } from "../context/UserContext";
 import { useAuth } from "../context/AuthContext";
 import { useBlockStatus, useToggleBlock } from "../hooks/useBlocks";
-import { fetchMyProfile, ProfileRow } from "../lib/api/profiles";
+import { ProfileRow } from "../lib/api/profiles";
 import { supabase } from "../lib/supabase";
 import { useConnectionStatus, useSendConnection } from "../hooks/useConnections";
 
 type Props = NativeStackScreenProps<DiscoverStackParamList, "PersonProfile">;
 
 const { width: W } = Dimensions.get("window");
-const PHOTO_HEIGHT = W * 1.05;
 
 export default function PersonProfileScreen({ route, navigation }: Props) {
   const { user } = useUser();
@@ -59,14 +57,19 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
 
   if (isLoading || !person) {
     return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <ActivityIndicator size="large" color="#7C3AED" />
+      <View className="flex-1 bg-surface items-center justify-center">
+        <ActivityIndicator size="large" color="#FF3B1D" />
       </View>
     );
   }
 
   const shared = getSharedInterests(person.interests ?? [], user.interests);
   const personInterests = person.interests ?? [];
+  const nameParts = (person.name || "Kindred").trim().split(/\s+/);
+  const firstName = nameParts[0].toUpperCase();
+  const restName = nameParts.slice(1).join(" ").toUpperCase();
+  const statCount = shared.length > 0 ? shared.length : personInterests.length;
+  const statLabel = shared.length > 0 ? "SHARED\nPASSIONS" : "ACTIVE\nPASSIONS";
 
   const handleConnect = () => {
     if (sendConnection.isPending || didRequestConnection) return;
@@ -117,75 +120,169 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
   const isActuallyPending = connectionStatus === "pending" || didRequestConnection;
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-surface">
+      {/* Top navigation & technical spec bar */}
+      <View className="flex-row items-center justify-between px-4 py-3 border-b border-border bg-surface">
+        <Pressable
+          onPress={() => navigation.goBack()}
+          className="w-9 h-9 bg-card border border-ink items-center justify-center active:opacity-70"
+        >
+          <Ionicons name="arrow-back" size={18} color="#111111" />
+        </Pressable>
+
+        <View className="flex-row items-center gap-3">
+          {person.city ? (
+            <View className="flex-row items-center gap-1">
+              <Ionicons name="location-outline" size={11} color="#111111" />
+              <Text className="text-ink font-body-semi text-[10px] uppercase tracking-[1.8px]">
+                {person.city}
+              </Text>
+            </View>
+          ) : null}
+          {person.age ? (
+            <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[1.8px]">
+              {person.age} YRS
+            </Text>
+          ) : null}
+        </View>
+      </View>
+
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
         bounces
       >
-        {/* Photo header */}
-        <View style={{ height: PHOTO_HEIGHT }}>
+        {/* PLANE 1 (BACK): Massive two-line editorial display name */}
+        <View className="px-4 pt-3 pb-7 bg-surface" style={{ zIndex: 1 }}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+            className="text-ink font-display uppercase"
+            style={{
+              fontSize: 72,
+              lineHeight: 64,
+              letterSpacing: -3,
+            }}
+          >
+            {firstName}
+          </Text>
+          {restName ? (
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.5}
+              className="text-ink font-display uppercase"
+              style={{
+                fontSize: 64,
+                lineHeight: 58,
+                letterSpacing: -2.5,
+              }}
+            >
+              {restName}
+            </Text>
+          ) : null}
+        </View>
+
+        {/* PLANE 2 (MIDDLE): Subject portrait overlapping background display typography */}
+        <View
+          className="mx-4 border border-ink bg-paper-sunken overflow-hidden"
+          style={{
+            height: W * 0.92,
+            marginTop: -26,
+            zIndex: 2,
+            shadowColor: "#111111",
+            shadowOffset: { width: 0, height: 14 },
+            shadowOpacity: 0.15,
+            shadowRadius: 20,
+            elevation: 6,
+          }}
+        >
           <Image
             source={{ uri: person.photo_url }}
-            style={{ width: W, height: PHOTO_HEIGHT }}
+            style={{ width: "100%", height: "100%" }}
             contentFit="cover"
           />
           <LinearGradient
-            colors={["rgba(0,0,0,0.4)", "transparent", "transparent"]}
-            style={{ position: "absolute", top: 0, left: 0, right: 0, height: 120 }}
-          />
-          <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.6)"]}
-            style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 200 }}
+            colors={["transparent", "rgba(17,17,17,0.6)"]}
+            locations={[0.45, 1]}
+            style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 140 }}
           />
 
-          {/* Back button */}
-          <Pressable
-            onPress={() => navigation.goBack()}
-            className="absolute top-14 left-5 w-10 h-10 bg-white/20 rounded-full items-center justify-center active:opacity-70"
+          {/* Framed architectural stat box (Maya Ross 8+ Experience style) */}
+          <View
+            className="absolute bottom-7 left-4 bg-card/95 border border-ink px-3.5 py-2.5 flex-row items-center"
+            style={{ gap: 10 }}
           >
-            <Ionicons name="arrow-back" size={22} color="#fff" />
-          </Pressable>
-
-          {/* Name overlay */}
-          <View className="absolute bottom-6 left-6 right-6">
-            <Text className="text-white font-display text-3xl mb-0.5">
-              {person.name}{person.age ? `, ${person.age}` : ""}
+            <Text
+              className="text-ink font-display-bold"
+              style={{ fontSize: 34, lineHeight: 34, letterSpacing: -1.5 }}
+            >
+              {String(statCount).padStart(2, "0")}
             </Text>
-            <Text className="text-white/80 font-body text-base">
-              📍 {person.city}
+            <Text className="text-ink font-body-bold text-[9px] uppercase tracking-[1.8px] leading-[13px]">
+              {statLabel}
             </Text>
           </View>
+
+          {person.school ? (
+            <View className="absolute top-3 right-3 bg-card/95 border border-ink px-2.5 py-1">
+              <Text className="text-ink font-body-semi text-[9px] uppercase tracking-[1.6px]">
+                {person.school}
+              </Text>
+            </View>
+          ) : null}
         </View>
 
-        {/* Content */}
-        <View className="px-6 pt-6 pb-10">
-          {/* Bio */}
-          <Text className="text-foreground font-body text-base leading-relaxed mb-6">
-            {person.bio}
-          </Text>
-
-          {/* Motive */}
+        {/* PLANE 3 (TOP): Foreground dossier card overlapping portrait plane */}
+        <View
+          className="mx-4 bg-card border border-ink p-5"
+          style={{ marginTop: -18, zIndex: 3 }}
+        >
+          {/* Motive as crisp uppercase manifesto */}
           {person.motive ? (
-            <View className="bg-accent/10 border border-accent/20 rounded-2xl p-4 mb-6 items-center">
-              <Text className="text-accent font-body-semi text-xs text-center uppercase tracking-wider mb-1">Motive</Text>
-              <Text className="text-foreground font-body text-sm text-center">"{person.motive}"</Text>
+            <View className="pb-3.5 mb-3.5 border-b border-border flex-row items-start gap-2">
+              <View className="w-1.5 h-1.5 bg-primary mt-1.5" />
+              <Text className="flex-1 text-ink font-body-bold text-[11px] uppercase tracking-[1.8px] leading-[17px]">
+                {person.motive}
+              </Text>
             </View>
           ) : null}
 
-          {/* Shared interests */}
+          {/* Bio */}
+          <Text className="text-ink font-body text-[13px] leading-[20px]">
+            {person.bio}
+          </Text>
+
+          {person.specific_interests ? (
+            <View className="mt-4 pt-3.5 border-t border-border">
+              <Text className="text-ink font-body text-[12px] leading-[18px] text-muted">
+                {person.specific_interests}
+              </Text>
+            </View>
+          ) : null}
+        </View>
+
+        {/* Shared Passions Spec Block */}
+        <View className="px-4 pt-6 pb-10">
           {shared.length > 0 && (
-            <View className="bg-accent/10 border border-accent/30 rounded-2xl p-4 mb-6">
-              <View className="flex-row items-center gap-2 mb-3">
-                <Text style={{ fontSize: 18 }}>✨</Text>
-                <Text className="text-foreground font-body-semi text-base">You both like</Text>
+            <View className="mb-6 pb-6 border-b border-border">
+              <View className="flex-row items-center justify-between mb-3">
+                <View className="flex-row items-center gap-2">
+                  <View className="w-2 h-2 bg-primary" />
+                  <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+                    MUTUAL WAVELENGTH
+                  </Text>
+                </View>
+                <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[1.8px]">
+                  {String(shared.length).padStart(2, "0")} MATCHED
+                </Text>
               </View>
               <View className="flex-row flex-wrap gap-2">
                 {shared.map((id) => (
                   <InterestChip
                     key={id}
                     label={getInterestLabel(id)}
-                    emoji={getInterestEmoji(id)}
                     variant="shared"
                   />
                 ))}
@@ -193,51 +290,33 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
             </View>
           )}
 
-          {/* All interests */}
-          <Text className="text-foreground font-body-semi text-base mb-3">
-            All interests
-          </Text>
+          {/* All Interests Index */}
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+              FULL PASSION INDEX
+            </Text>
+            <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[1.8px]">
+              {String(personInterests.length).padStart(2, "0")} TOTAL
+            </Text>
+          </View>
           <View className="flex-row flex-wrap gap-2 mb-8">
             {personInterests.map((id) => (
               <InterestChip
                 key={id}
                 label={getInterestLabel(id)}
-                emoji={getInterestEmoji(id)}
                 variant={shared.includes(id) ? "shared" : "default"}
               />
             ))}
           </View>
 
-          {/* Connect */}
-          {(connectionStatus === "none" || connectionStatus === "rejected") && !isActuallyPending && (
-            <Button
-              label={`Connect with ${person.name}`}
-              onPress={handleConnect}
-              disabled={sendConnection.isPending || didRequestConnection}
-            />
-          )}
-
-          {isActuallyPending && (
-            <View className="bg-surface border border-border rounded-xl py-3.5 items-center">
-              <Text className="text-foreground font-body-semi text-base">Request Pending</Text>
-            </View>
-          )}
-
-          {(connectionStatus === "accepted") && !isActuallyPending && (
-            <View className="bg-surface border border-border rounded-xl py-3.5 items-center">
-              <Text className="text-foreground font-body-semi text-base">You are connected</Text>
-            </View>
-          )}
-
-          {/* Safety actions */}
-          <View className="flex-row justify-center gap-6 mt-5">
-            <Pressable
-              onPress={handleReport}
-              className="active:opacity-70"
-            >
-              <Text className="text-muted font-body text-sm">Report</Text>
+          {/* Safety actions in tiny uppercase ink */}
+          <View className="flex-row justify-center items-center gap-6 pt-4 border-t border-border">
+            <Pressable onPress={handleReport} className="py-1 active:opacity-70">
+              <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[1.8px]">
+                Report Profile
+              </Text>
             </Pressable>
-            <Text className="text-border">•</Text>
+            <View className="w-1 h-1 bg-border" />
             <Pressable
               onPress={() => {
                 Alert.alert(
@@ -248,18 +327,49 @@ export default function PersonProfileScreen({ route, navigation }: Props) {
                     {
                       text: isBlocked ? "Unblock" : "Block",
                       style: isBlocked ? "default" : "destructive",
-                      onPress: () => toggleBlock()
-                    }
+                      onPress: () => toggleBlock(),
+                    },
                   ]
                 );
               }}
-              className="active:opacity-70"
+              className="py-1 active:opacity-70"
             >
-              <Text className="text-muted font-body text-sm">{isBlocked ? "Unblock" : "Block"}</Text>
+              <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[1.8px]">
+                {isBlocked ? "Unblock User" : "Block User"}
+              </Text>
             </Pressable>
           </View>
         </View>
       </ScrollView>
+
+      {/* Sticky Foreground Action Bar (Maya Ross 'Book a session' bar) */}
+      <View className="px-4 py-3 bg-surface border-t border-ink">
+        {(connectionStatus === "none" || connectionStatus === "rejected") && !isActuallyPending && (
+          <Button
+            label={`Connect with ${person.name}`}
+            onPress={handleConnect}
+            disabled={sendConnection.isPending || didRequestConnection}
+          />
+        )}
+
+        {isActuallyPending && (
+          <View className="bg-card border border-ink py-4 px-5 flex-row items-center justify-between">
+            <Text className="text-ink font-body-bold text-xs uppercase tracking-[2px]">
+              Request Pending
+            </Text>
+            <View className="w-2 h-2 bg-primary" />
+          </View>
+        )}
+
+        {connectionStatus === "accepted" && !isActuallyPending && (
+          <View className="bg-ink border border-ink py-4 px-5 flex-row items-center justify-between">
+            <Text className="text-card font-body-bold text-xs uppercase tracking-[2px]">
+              Connected
+            </Text>
+            <Ionicons name="checkmark" size={16} color="#FF3B1D" />
+          </View>
+        )}
+      </View>
     </View>
   );
 }
