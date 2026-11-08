@@ -49,12 +49,12 @@ jobs:
         run: eas build --platform android --profile production --local --non-interactive
         env:
           # Tell EAS exactly what to name the final output file
-          EAS_LOCAL_BUILD_ARTIFACT_PATH: app-release.aab
+          EAS_LOCAL_BUILD_ARTIFACT_PATH: app-release.apk
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: android-app-bundle
-          path: app-release.aab
+          name: android-apk
+          path: app-release.apk
           retention-days: 7
