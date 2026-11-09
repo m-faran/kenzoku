@@ -4,11 +4,11 @@ import { Ionicons } from "@expo/vector-icons";
 import Avatar from "./Avatar";
 import { NotificationRow } from "../lib/api/notifications";
 
-const iconMap: Record<NotificationRow["type"], { name: keyof typeof Ionicons.glyphMap; color: string; bg: string }> = {
-  connection: { name: "person-add", color: "#7C3AED", bg: "#EDE9FE" },
-  message: { name: "chatbubble", color: "#7C3AED", bg: "#EDE9FE" },
-  discovery: { name: "compass", color: "#F59E0B", bg: "#FEF3C7" },
-  shared: { name: "star", color: "#F59E0B", bg: "#FEF3C7" },
+const iconMap: Record<NotificationRow["type"], { name: keyof typeof Ionicons.glyphMap }> = {
+  connection: { name: "person-add-outline" },
+  message: { name: "chatbubble-outline" },
+  discovery: { name: "compass-outline" },
+  shared: { name: "star-outline" },
 };
 
 type Props = {
@@ -20,24 +20,25 @@ export default function NotificationItem({ notification }: Props) {
 
   return (
     <View
-      className={`flex-row items-center px-5 py-4 ${notification.read ? "bg-white" : "bg-surface"}`}
+      className={`flex-row items-center px-4 py-3.5 border-b border-border ${
+        notification.read ? "bg-card" : "bg-surface"
+      }`}
     >
       {notification.avatar_url ? (
-        <Avatar uri={notification.avatar_url} size={44} />
+        <Avatar uri={notification.avatar_url} size={40} />
       ) : (
-        <View
-          className="rounded-full items-center justify-center"
-          style={{ width: 44, height: 44, backgroundColor: icon.bg }}
-        >
-          <Ionicons name={icon.name} size={20} color={icon.color} />
+        <View className="w-10 h-10 border border-ink bg-card items-center justify-center">
+          <Ionicons name={icon.name} size={18} color="#111111" />
         </View>
       )}
-      <View className="flex-1 ml-3">
-        <Text className="text-foreground font-body-medium text-sm">{notification.text}</Text>
-        <Text className="text-muted font-body text-xs mt-0.5">{new Date(notification.created_at).toLocaleDateString()}</Text>
+      <View className="flex-1 ml-3.5">
+        <Text className="text-ink font-body text-xs leading-[17px]">{notification.text}</Text>
+        <Text className="text-muted font-body-semi text-[9px] uppercase tracking-[1.5px] mt-1">
+          {new Date(notification.created_at).toLocaleDateString()}
+        </Text>
       </View>
       {!notification.read && (
-        <View className="w-2 h-2 bg-primary rounded-full ml-2" />
+        <View className="w-1.5 h-1.5 bg-primary ml-2" />
       )}
     </View>
   );

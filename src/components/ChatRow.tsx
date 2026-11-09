@@ -28,23 +28,27 @@ export default function ChatRow({ channel, onPress }: Props) {
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center px-5 py-4 bg-white active:bg-surface"
+      className="flex-row items-center px-4 py-3.5 bg-card active:bg-paper-sunken border-b border-border"
     >
-      <Avatar uri={other_user.photo_url} size={52} />
-      <View className="flex-1 ml-3">
-        <View className="flex-row items-center justify-between mb-0.5">
-          <Text className="text-foreground font-body-semi text-base">{other_user.name}</Text>
+      <Avatar uri={other_user.photo_url} size={48} />
+      <View className="flex-1 ml-3.5">
+        <View className="flex-row items-center justify-between mb-1">
+          <Text className="text-ink font-body-bold text-xs uppercase tracking-[1.5px]" numberOfLines={1}>
+            {other_user.name}
+          </Text>
           {last_message && (
-            <Text className="text-muted font-body text-xs">
+            <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[1.5px]">
               {formatTime(last_message.created_at)}
             </Text>
           )}
         </View>
         <Text
-          className={`flex-1 text-sm font-body ${channel.is_blocked ? "text-muted italic" : "text-muted"}`}
+          className={`text-xs font-body leading-[17px] ${
+            channel.is_blocked ? "text-muted italic" : "text-muted"
+          }`}
           numberOfLines={1}
         >
-          {channel.is_blocked ? "You blocked this user" : (last_message?.text ?? "No messages yet")}
+          {channel.is_blocked ? "Blocked dispatch" : (last_message?.text ?? "No messages exchanged yet")}
         </Text>
       </View>
     </Pressable>

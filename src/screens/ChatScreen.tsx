@@ -73,27 +73,30 @@ export default function ChatScreen({ route, navigation }: Props) {
     : messages;
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-surface">
       <KeyboardAvoidingView
         className="flex-1"
-        behavior="padding"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         {/* Header */}
-        <View className="flex-row items-center px-4 py-3 border-b border-border bg-white">
-          <Pressable onPress={() => navigation.goBack()} className="mr-3 active:opacity-70">
-            <Ionicons name="arrow-back" size={24} color="#18181B" />
+        <View className="flex-row items-center px-4 py-3 border-b border-border bg-surface">
+          <Pressable onPress={() => navigation.goBack()} className="mr-3 w-8 h-8 bg-card border border-ink items-center justify-center active:opacity-70">
+            <Ionicons name="arrow-back" size={16} color="#111111" />
           </Pressable>
           
           <Pressable 
             className="flex-1 flex-row items-center"
             onPress={() => navigation.getParent()?.navigate("PersonProfile", { personId })}
           >
-            {person && <Avatar uri={person.photo_url} size={40} />}
-            <View className="flex-1 ml-3">
-              <Text className="text-foreground font-body-semi text-base" numberOfLines={1}>
+            {person && <Avatar uri={person.photo_url} size={36} />}
+            <View className="flex-1 ml-2.5">
+              <Text className="text-ink font-body-bold text-xs uppercase tracking-[1.5px]" numberOfLines={1}>
                 {person?.name ?? "Loading..."}
               </Text>
-              <Text className="text-online font-body text-xs">Online</Text>
+              <View className="flex-row items-center gap-1.5 mt-0.5">
+                <View className="w-1.5 h-1.5 bg-online" />
+                <Text className="text-muted font-body-semi text-[9px] uppercase tracking-[1.2px]">ACTIVE CHANNEL</Text>
+              </View>
             </View>
           </Pressable>
           <Pressable
@@ -111,22 +114,23 @@ export default function ChatScreen({ route, navigation }: Props) {
                 ]
               );
             }}
-            className="active:opacity-70"
+            className="w-8 h-8 bg-card border border-border items-center justify-center active:opacity-70"
           >
-            <Ionicons name="ellipsis-horizontal" size={22} color="#71717A" />
+            <Ionicons name="ellipsis-horizontal" size={16} color="#111111" />
           </Pressable>
         </View>
 
         {/* Shared interests banner */}
         {shared.length > 0 && (
-          <View className="px-4 py-2.5 bg-surface border-b border-border">
-            <View className="flex-row items-center gap-2 flex-wrap">
-              <Text className="text-muted font-body text-xs">Shared interests:</Text>
+          <View className="px-4 py-2 bg-card border-b border-border">
+            <View className="flex-row items-center gap-1.5 flex-wrap">
+              <Text className="text-muted font-body-bold text-[9px] uppercase tracking-[1.5px] mr-1">
+                SHARED:
+              </Text>
               {shared.map((id) => (
                 <InterestChip
                   key={id}
                   label={getInterestLabel(id)}
-                  emoji={getInterestEmoji(id)}
                   variant="shared"
                   small
                 />
@@ -138,7 +142,7 @@ export default function ChatScreen({ route, navigation }: Props) {
         {/* Messages */}
         {isLoading ? (
           <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#7C3AED" />
+            <ActivityIndicator size="large" color="#FF3B1D" />
           </View>
         ) : (
           <FlatList
@@ -146,7 +150,7 @@ export default function ChatScreen({ route, navigation }: Props) {
             data={visibleMessages}
             keyExtractor={(m) => m.id}
             className="flex-1 px-4"
-            contentContainerStyle={{ paddingVertical: 16, gap: 8 }}
+            contentContainerStyle={{ paddingVertical: 16, gap: 10 }}
             showsVerticalScrollIndicator={false}
             onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
             renderItem={({ item: msg }) => {
@@ -155,32 +159,36 @@ export default function ChatScreen({ route, navigation }: Props) {
               const timeStr = time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
               return (
-                <View className={`max-w-[78%] ${fromMe ? "self-end" : "self-start"}`}>
+                <View className={`max-w-[80%] ${fromMe ? "self-end" : "self-start"}`}>
                   <View
-                    className={`rounded-2xl px-4 py-3 ${
+                    className={`px-3.5 py-2.5 border ${
                       fromMe
-                        ? "bg-primary rounded-br-sm"
-                        : "bg-surface border border-border rounded-bl-sm"
+                        ? "bg-ink border-ink"
+                        : "bg-card border-ink"
                     }`}
                   >
                     <Text
-                      className={`font-body text-sm leading-relaxed ${
-                        fromMe ? "text-white" : "text-foreground"
+                      className={`font-body text-xs leading-[18px] ${
+                        fromMe ? "text-card" : "text-ink"
                       }`}
                     >
                       {msg.text}
                     </Text>
                   </View>
-                  <Text className={`text-muted font-body text-xs mt-1 ${fromMe ? "text-right" : "text-left"}`}>
+                  <Text className={`text-muted font-body-semi text-[9px] uppercase tracking-[1px] mt-1 ${fromMe ? "text-right" : "text-left"}`}>
                     {timeStr}
                   </Text>
                 </View>
               );
             }}
             ListEmptyComponent={
-              <View className="flex-1 items-center justify-center py-20">
-                <Text className="text-muted font-body text-sm">
-                  No messages yet. Say hello! 👋
+              <View className="flex-1 items-center justify-center py-20 px-8">
+                <View className="w-2 h-2 bg-primary mb-2" />
+                <Text className="text-ink font-body-bold text-xs uppercase tracking-[2px] text-center mb-1">
+                  CHANNEL OPEN
+                </Text>
+                <Text className="text-muted font-body text-xs text-center leading-[18px]">
+                  Say hello to initiate your exchange.
                 </Text>
               </View>
             }
@@ -188,25 +196,26 @@ export default function ChatScreen({ route, navigation }: Props) {
         )}
 
         {/* Privacy notice */}
-        <View className="px-4 py-1">
-          <Text className="text-muted font-body text-xs text-center">
-            Chats are encrypted in transit.
+        <View className="px-4 py-1.5 border-t border-border bg-surface">
+          <Text className="text-muted font-body-semi text-[9px] uppercase tracking-[1.5px] text-center">
+            Direct channel · Encrypted in transit
           </Text>
         </View>
 
         {/* Composer / Blocked Message */}
         {isBlocked ? (
-          <View className="flex-row items-center justify-center px-4 py-5 bg-surface border-t border-border">
-            <Text className="text-muted font-body-semi text-base">You blocked this user</Text>
+          <View className="flex-row items-center justify-center px-4 py-4 bg-paper-sunken border-t border-border">
+            <Text className="text-muted font-body-bold text-xs uppercase tracking-[2px]">
+              You blocked this user
+            </Text>
           </View>
         ) : (
-          <View className="flex-row items-center px-4 py-3 bg-white border-t border-border gap-2">
-
-            <View className="flex-1 bg-surface border border-border rounded-2xl px-4 py-2.5">
+          <View className="flex-row items-stretch px-4 py-3 bg-surface border-t border-ink gap-2">
+            <View className="flex-1 bg-card border border-ink px-3 py-2.5 justify-center">
               <TextInput
-                className="text-foreground font-body text-base"
-                placeholder="Message..."
-                placeholderTextColor="#A1A1AA"
+                className="text-ink font-body text-xs"
+                placeholder="MESSAGE..."
+                placeholderTextColor="#A8A29E"
                 value={text}
                 onChangeText={setText}
                 multiline
@@ -214,11 +223,11 @@ export default function ChatScreen({ route, navigation }: Props) {
             </View>
             <Pressable
               onPress={send}
-              className={`w-10 h-10 rounded-full items-center justify-center active:opacity-80 ${
-                text.trim() ? "bg-primary" : "bg-border"
+              className={`w-12 items-center justify-center border border-ink active:opacity-85 ${
+                text.trim() ? "bg-primary" : "bg-card"
               }`}
             >
-              <Ionicons name="send" size={16} color="#fff" />
+              <Ionicons name="arrow-forward" size={16} color={text.trim() ? "#FCFBF7" : "#111111"} />
             </Pressable>
           </View>
         )}

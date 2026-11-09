@@ -62,7 +62,7 @@ export default function SignUpScreen({ navigation }: Props) {
   return (
     <KeyboardAvoidingView 
       className="flex-1 bg-surface"
-      behavior="padding"
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
         className="flex-1"
@@ -70,26 +70,38 @@ export default function SignUpScreen({ navigation }: Props) {
         keyboardShouldPersistTaps="handled"
       >
         {/* Back */}
-        <Pressable onPress={() => navigation.goBack()} className="mb-6 active:opacity-70">
-          <Ionicons name="arrow-back" size={24} color="#18181B" />
+        <Pressable onPress={() => navigation.goBack()} className="mb-6 w-9 h-9 bg-card border border-ink items-center justify-center active:opacity-70">
+          <Ionicons name="arrow-back" size={18} color="#111111" />
         </Pressable>
 
-        <Text className="text-foreground font-display text-3xl mb-1">Create account</Text>
-        <Text className="text-muted font-body text-base mb-8">
-          Join and find people who share your interests.
+        <View className="flex-row items-center gap-2 mb-2">
+          <View className="w-2 h-2 bg-primary" />
+          <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+            MEMBERSHIP
+          </Text>
+        </View>
+
+        <Text
+          className="text-ink font-display uppercase mb-1"
+          style={{ fontSize: 40, lineHeight: 36, letterSpacing: -2 }}
+        >
+          CREATE{"\n"}ACCOUNT
+        </Text>
+        <Text className="text-muted font-body text-xs leading-[18px] mb-8">
+          Join and connect with people on your exact wavelength.
         </Text>
 
         <Input
-          label="Email"
-          placeholder="you@example.com"
+          label="Email Address"
+          placeholder="YOU@EXAMPLE.COM"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
         />
         <Input
-          label="Age"
-          placeholder="e.g. 22"
+          label="Your Age"
+          placeholder="E.G. 22"
           keyboardType="number-pad"
           value={age}
           onChangeText={(text) => {
@@ -98,8 +110,8 @@ export default function SignUpScreen({ navigation }: Props) {
           }}
         />
         <Input
-          label="Create Password"
-          placeholder="At least 8 characters"
+          label="Password (min 8 characters)"
+          placeholder="AT LEAST 8 CHARACTERS"
           secureTextEntry
           value={password}
           onChangeText={(text) => {
@@ -109,7 +121,7 @@ export default function SignUpScreen({ navigation }: Props) {
         />
         <Input
           label="Confirm Password"
-          placeholder="Repeat your password"
+          placeholder="REPEAT YOUR PASSWORD"
           secureTextEntry
           value={confirmPassword}
           onChangeText={(text) => {
@@ -119,27 +131,25 @@ export default function SignUpScreen({ navigation }: Props) {
         />
 
         {error ? (
-          <Text className="text-red-500 font-body text-sm mt-1">{error}</Text>
+          <Text className="text-danger font-body-semi text-xs mt-1 mb-2">{error}</Text>
         ) : null}
 
-        <View className={error ? "mt-3 mb-6" : "mt-2 mb-6"}>
+        <View className="mt-3 mb-6">
           <Button
-            label={loading ? "Creating account..." : "Continue"}
+            label={loading ? "Registering..." : "Continue"}
             onPress={handleContinue}
             disabled={loading}
           />
         </View>
-
-
 
         {/* Link to Login */}
         <Pressable
           onPress={() => navigation.navigate("Login")}
           className="items-center active:opacity-70"
         >
-          <Text className="text-muted font-body text-base">
+          <Text className="text-muted font-body text-xs">
             Already have an account?{" "}
-            <Text className="text-primary font-body-semi">Log in</Text>
+            <Text className="text-primary font-body-bold uppercase tracking-[1px]">Log in</Text>
           </Text>
         </Pressable>
       </ScrollView>

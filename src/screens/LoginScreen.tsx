@@ -34,25 +34,37 @@ export default function LoginScreen({ navigation }: Props) {
   return (
     <KeyboardAvoidingView 
       className="flex-1 bg-surface"
-      behavior="padding"
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: Math.max(24, insets.bottom + 24) }}
         keyboardShouldPersistTaps="handled"
       >
-        <Pressable onPress={() => navigation.goBack()} className="mb-6 active:opacity-70">
-          <Ionicons name="arrow-back" size={24} color="#18181B" />
+        <Pressable onPress={() => navigation.goBack()} className="mb-6 w-9 h-9 bg-card border border-ink items-center justify-center active:opacity-70">
+          <Ionicons name="arrow-back" size={18} color="#111111" />
         </Pressable>
 
-        <Text className="text-foreground font-display text-3xl mb-1">Welcome back</Text>
-        <Text className="text-muted font-body text-base mb-8">
-          Log in to find your people.
+        <View className="flex-row items-center gap-2 mb-2">
+          <View className="w-2 h-2 bg-primary" />
+          <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+            AUTHENTICATION
+          </Text>
+        </View>
+
+        <Text
+          className="text-ink font-display uppercase mb-1"
+          style={{ fontSize: 44, lineHeight: 40, letterSpacing: -2 }}
+        >
+          WELCOME{"\n"}BACK
+        </Text>
+        <Text className="text-muted font-body text-xs leading-[18px] mb-8">
+          Enter your credentials to access your kindred circle.
         </Text>
 
         <Input
           label="Email"
-          placeholder="you@example.com"
+          placeholder="YOU@EXAMPLE.COM"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -60,7 +72,7 @@ export default function LoginScreen({ navigation }: Props) {
         />
         <Input
           label="Password"
-          placeholder="Your password"
+          placeholder="ENTER PASSWORD"
           secureTextEntry
           value={password}
           onChangeText={(text) => {
@@ -70,11 +82,11 @@ export default function LoginScreen({ navigation }: Props) {
         />
 
         {error ? (
-          <Text className="text-red-500 font-body text-sm mt-1 mb-2">{error}</Text>
+          <Text className="text-danger font-body-semi text-xs mt-1 mb-2">{error}</Text>
         ) : null}
 
         <Pressable
-          className="mb-6 active:opacity-70"
+          className="mb-8 active:opacity-70"
           onPress={async () => {
             if (!email) {
               Alert.alert("Error", "Please enter your email address first.");
@@ -88,24 +100,26 @@ export default function LoginScreen({ navigation }: Props) {
             }
           }}
         >
-          <Text className="text-primary font-body-medium text-sm text-right">Forgot password?</Text>
+          <Text className="text-primary font-body-bold text-[10px] uppercase tracking-[1.5px] text-right">
+            Forgot password?
+          </Text>
         </Pressable>
 
-        <Button
-          label={loading ? "Logging in..." : "Log In"}
-          onPress={handleLogin}
-          disabled={loading}
-        />
-
-
+        <View className="mb-6">
+          <Button
+            label={loading ? "Authenticating..." : "Log In"}
+            onPress={handleLogin}
+            disabled={loading}
+          />
+        </View>
 
         <Pressable
           onPress={() => navigation.navigate("SignUp")}
           className="items-center active:opacity-70"
         >
-          <Text className="text-muted font-body text-base">
+          <Text className="text-muted font-body text-xs">
             Don't have an account?{" "}
-            <Text className="text-primary font-body-semi">Sign up</Text>
+            <Text className="text-primary font-body-bold uppercase tracking-[1px]">Sign up</Text>
           </Text>
         </Pressable>
       </ScrollView>

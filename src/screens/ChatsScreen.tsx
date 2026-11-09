@@ -27,15 +27,33 @@ export default function ChatsScreen() {
 
   return (
     <View className="flex-1 bg-surface">
+      {/* Top technical metadata bar */}
+      <View className="flex-row items-center justify-between px-4 py-3 border-b border-border">
+        <View className="flex-row items-center gap-2">
+          <View className="w-2 h-2 bg-primary" />
+          <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+            DISPATCH INDEX
+          </Text>
+        </View>
+        <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[1.8px]">
+          {String(channels.length).padStart(2, "0")} CHANNELS
+        </Text>
+      </View>
+
       {/* Header */}
-      <View className="px-5 pt-4 pb-3">
-        <Text className="text-foreground font-display text-2xl mb-4">Chats</Text>
-        <View className="flex-row items-center bg-white border border-border rounded-xl px-4 py-3 gap-2">
-          <Ionicons name="search" size={18} color="#A1A1AA" />
+      <View className="px-4 pt-3 pb-4">
+        <Text
+          className="text-ink font-display uppercase mb-3"
+          style={{ fontSize: 52, lineHeight: 48, letterSpacing: -2 }}
+        >
+          CHATS
+        </Text>
+        <View className="flex-row items-center bg-card border border-ink px-3.5 py-2.5 gap-2">
+          <Ionicons name="search" size={15} color="#111111" />
           <TextInput
-            className="flex-1 text-foreground font-body text-base"
-            placeholder="Search conversations..."
-            placeholderTextColor="#A1A1AA"
+            className="flex-1 text-ink font-body text-xs"
+            placeholder="SEARCH DISPATCHES..."
+            placeholderTextColor="#A8A29E"
             value={search}
             onChangeText={setSearch}
           />
@@ -44,7 +62,10 @@ export default function ChatsScreen() {
 
       {isLoading ? (
         <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#7C3AED" />
+          <ActivityIndicator size="large" color="#FF3B1D" />
+          <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[2px] mt-3">
+            Loading channels...
+          </Text>
         </View>
       ) : (
         <FlatList
@@ -61,18 +82,19 @@ export default function ChatsScreen() {
               }
             />
           )}
-          ItemSeparatorComponent={() => <View className="h-px bg-border mx-5" />}
           ListEmptyComponent={
-            <View className="flex-1 items-center justify-center py-20">
-              <Text style={{ fontSize: 40 }} className="mb-3">💬</Text>
-              <Text className="text-foreground font-body-semi text-lg">No chats yet</Text>
-              <Text className="text-muted font-body text-sm text-center mt-1 px-8">
-                Connect with people to start conversations
+            <View className="flex-1 items-center justify-center py-24 px-8">
+              <View className="w-2 h-2 bg-primary mb-3" />
+              <Text className="text-ink font-display uppercase text-2xl text-center mb-1">
+                NO DISPATCHES
+              </Text>
+              <Text className="text-muted font-body text-xs text-center leading-[18px]">
+                Connect with kindred spirits on Discover to open instantaneous direct channels.
               </Text>
             </View>
           }
           showsVerticalScrollIndicator={false}
-          className="flex-1 bg-white"
+          className="flex-1 bg-surface"
         />
       )}
     </View>

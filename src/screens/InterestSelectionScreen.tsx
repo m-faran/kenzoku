@@ -57,43 +57,55 @@ export default function InterestSelectionScreen({ navigation }: Props) {
   return (
     <KeyboardAvoidingView 
       className="flex-1 bg-surface"
-      behavior="padding"
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <View className="flex-1">
         {/* Header */}
-        <View className="px-6 pt-6 pb-4">
-          <View className="flex-row items-center mb-6">
-            <Pressable onPress={() => navigation.goBack()} className="mr-4 active:opacity-70">
-              <Ionicons name="arrow-back" size={24} color="#18181B" />
+        <View className="px-5 pt-4 pb-3">
+          <View className="flex-row items-center mb-5">
+            <Pressable onPress={() => navigation.goBack()} className="mr-3 w-8 h-8 bg-card border border-ink items-center justify-center active:opacity-70">
+              <Ionicons name="arrow-back" size={16} color="#111111" />
             </Pressable>
-            <View className="flex-row gap-1.5 flex-1">
+            <View className="flex-row gap-2 flex-1">
               {[1, 2, 3].map((step) => (
                 <View
                   key={step}
-                  className={`h-1 flex-1 rounded-full ${step <= 2 ? "bg-primary" : "bg-border"}`}
+                  className={`h-1 flex-1 ${step <= 2 ? "bg-primary" : "bg-border"}`}
                 />
               ))}
             </View>
           </View>
 
-          <Text className="text-foreground font-display text-3xl mb-2">What are you into?</Text>
-          <Text className="text-muted font-body text-base mb-6">
-            Choose things you're passionate about so we can find people who share them.
+          <View className="flex-row items-center gap-2 mb-1">
+            <View className="w-2 h-2 bg-primary" />
+            <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+              ONBOARDING · 02 / 03
+            </Text>
+          </View>
+
+          <Text
+            className="text-ink font-display uppercase mb-1"
+            style={{ fontSize: 36, lineHeight: 32, letterSpacing: -1.5 }}
+          >
+            PASSION INDEX
+          </Text>
+          <Text className="text-muted font-body text-xs leading-[18px] mb-5">
+            Choose what you are truly obsessed with to calculate kindred compatibility.
           </Text>
 
           {/* Search */}
-          <View className="flex-row items-center bg-white border border-border rounded-xl px-4 py-3 gap-2">
-            <Ionicons name="search" size={18} color="#A1A1AA" />
+          <View className="flex-row items-center bg-card border border-ink px-3 py-2.5 gap-2">
+            <Ionicons name="search" size={15} color="#111111" />
             <TextInput
-              className="flex-1 text-foreground font-body text-base"
-              placeholder="Search interests..."
-              placeholderTextColor="#A1A1AA"
+              className="flex-1 text-ink font-body text-xs"
+              placeholder="SEARCH PASSIONS..."
+              placeholderTextColor="#A8A29E"
               value={search}
               onChangeText={setSearch}
             />
             {search.length > 0 && (
               <Pressable onPress={() => setSearch("")}>
-                <Ionicons name="close-circle" size={18} color="#A1A1AA" />
+                <Ionicons name="close-circle" size={16} color="#111111" />
               </Pressable>
             )}
           </View>
@@ -101,16 +113,21 @@ export default function InterestSelectionScreen({ navigation }: Props) {
 
         <ScrollView
           ref={scrollViewRef}
-          className="flex-1 px-6"
+          className="flex-1 px-5"
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           {/* Selected chips */}
           {selected.length > 0 && (
-            <View className="mb-5">
-              <Text className="text-foreground font-body-semi text-sm mb-2">
-                Selected ({selected.length})
-              </Text>
+            <View className="mb-5 pb-5 border-b border-border">
+              <View className="flex-row items-center justify-between mb-2.5">
+                <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+                  SELECTED PASSIONS
+                </Text>
+                <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[1.5px]">
+                  {String(selected.length).padStart(2, "0")} TOTAL
+                </Text>
+              </View>
               <View className="flex-row flex-wrap gap-2">
                 {selected.map((id) => {
                   const interest = ALL_INTERESTS.find((i) => i.id === id);
@@ -119,7 +136,6 @@ export default function InterestSelectionScreen({ navigation }: Props) {
                     <InterestChip
                       key={id}
                       label={label}
-                      emoji={interest?.emoji}
                       variant="selected"
                       onPress={() => toggle(id)}
                     />
@@ -133,25 +149,24 @@ export default function InterestSelectionScreen({ navigation }: Props) {
           {showAdd && (
             <Pressable
               onPress={addCustom}
-              className="flex-row items-center gap-2 bg-accent/10 border border-accent/30 rounded-xl px-4 py-3 mb-4 active:opacity-80"
+              className="flex-row items-center justify-between bg-card border border-ink px-4 py-3 mb-4 active:opacity-85"
             >
-              <Ionicons name="add-circle" size={20} color="#F59E0B" />
-              <Text className="text-foreground font-body-medium text-base">
-                + Add "{search}"
+              <Text className="text-ink font-body-bold text-[11px] uppercase tracking-[1.8px]">
+                + INDEX "{search.toUpperCase()}"
               </Text>
+              <Ionicons name="add" size={16} color="#111111" />
             </Pressable>
           )}
 
           {/* Grid */}
-          <Text className="text-muted font-body-medium text-sm mb-3">
-            {search ? "Results" : "Popular interests"}
+          <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px] mb-3">
+            {search ? "SEARCH RESULTS" : "POPULAR ARCHIVES"}
           </Text>
           <View className="flex-row flex-wrap gap-2 mb-8">
             {filtered.map((interest) => (
               <InterestChip
                 key={interest.id}
                 label={interest.label}
-                emoji={interest.emoji}
                 variant={selected.includes(interest.id) ? "selected" : "default"}
                 onPress={() => toggle(interest.id)}
               />
@@ -160,20 +175,20 @@ export default function InterestSelectionScreen({ navigation }: Props) {
 
           {/* Specific Interests prompt */}
           {selected.length > 0 && (
-            <View className="mt-4 mb-8">
-              <Text className="text-foreground font-body-semi text-sm mb-2">
-                Specify your interests (Optional)
+            <View className="mb-8">
+              <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px] mb-2">
+                SPECIFY YOUR NICHES (OPTIONAL)
               </Text>
-              <View className="bg-white border border-border rounded-xl px-4 py-3">
+              <View className="bg-card border border-ink px-3.5 py-3">
                 <TextInput
                   ref={inputRef}
-                  className="text-foreground font-body text-sm leading-relaxed"
-                  placeholder="e.g. For Anime, Attack on Titan. For Coding, React or Python. We use these to help you discover the right people!"
-                  placeholderTextColor="#A1A1AA"
+                  className="text-ink font-body text-xs leading-[18px]"
+                  placeholder="e.g. For Anime: Cyberpunk Edgerunners. For Coding: React Native, Rust. For Film: French New Wave, 35mm."
+                  placeholderTextColor="#A8A29E"
                   value={specificInterests}
                   onChangeText={setSpecificInterests}
                   multiline
-                  style={{ minHeight: 80, textAlignVertical: 'top' }}
+                  style={{ minHeight: 70, textAlignVertical: 'top' }}
                 />
               </View>
             </View>
@@ -182,11 +197,11 @@ export default function InterestSelectionScreen({ navigation }: Props) {
 
         {/* CTA */}
         <View 
-          className="px-6 pt-3 bg-surface border-t border-border"
-          style={{ paddingBottom: Math.max(24, insets.bottom + 12) }}
+          className="px-5 pt-3 bg-surface border-t border-ink"
+          style={{ paddingBottom: Math.max(20, insets.bottom + 10) }}
         >
           <Button
-            label={selected.length > 0 ? `Continue with ${selected.length} interest${selected.length > 1 ? "s" : ""}` : "Continue"}
+            label={selected.length > 0 ? `Continue with ${selected.length} passion${selected.length > 1 ? "s" : ""}` : "Select at least 1 passion"}
             onPress={() => {
               const proceed = async () => {
                 updateUser({ interests: selected, specificInterests });

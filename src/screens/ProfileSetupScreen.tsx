@@ -60,7 +60,7 @@ export default function ProfileSetupScreen({ navigation }: Props) {
   return (
     <KeyboardAvoidingView 
       className="flex-1 bg-surface"
-      behavior="padding"
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
         className="flex-1"
@@ -68,24 +68,34 @@ export default function ProfileSetupScreen({ navigation }: Props) {
         keyboardShouldPersistTaps="handled"
       >
         {/* Header */}
-        <View className="flex-row items-center mb-8">
+        <View className="flex-row items-center mb-6">
           {user.name ? (
-            <Pressable onPress={() => navigation.goBack()} className="mr-4 active:opacity-70">
-              <Ionicons name="arrow-back" size={24} color="#18181B" />
+            <Pressable onPress={() => navigation.goBack()} className="mr-3 w-8 h-8 bg-card border border-ink items-center justify-center active:opacity-70">
+              <Ionicons name="arrow-back" size={16} color="#111111" />
             </Pressable>
           ) : null}
           <View className="flex-1">
-            <Text className="text-foreground font-display text-2xl">Your profile</Text>
-            <Text className="text-muted font-body text-sm">Tell people a little about yourself</Text>
+            <View className="flex-row items-center gap-2 mb-1">
+              <View className="w-2 h-2 bg-primary" />
+              <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+                ONBOARDING · 01 / 03
+              </Text>
+            </View>
+            <Text
+              className="text-ink font-display uppercase"
+              style={{ fontSize: 36, lineHeight: 32, letterSpacing: -1.5 }}
+            >
+              IDENTITY DOSSIER
+            </Text>
           </View>
         </View>
 
         {/* Step indicator */}
-        <View className="flex-row gap-1.5 mb-8">
+        <View className="flex-row gap-2 mb-8">
           {[1, 2, 3].map((step) => (
             <View
               key={step}
-              className={`h-1 flex-1 rounded-full ${step === 1 ? "bg-primary" : "bg-border"}`}
+              className={`h-1 flex-1 ${step === 1 ? "bg-primary" : "bg-border"}`}
             />
           ))}
         </View>
@@ -96,55 +106,55 @@ export default function ProfileSetupScreen({ navigation }: Props) {
             {photo && photo !== "" ? (
               <Avatar uri={photo} size={96} />
             ) : (
-              <View className="w-24 h-24 bg-primary/10 rounded-full items-center justify-center border-2 border-dashed border-primary/40">
-                <Ionicons name="person" size={36} color="#A78BFA" />
+              <View className="w-24 h-24 bg-card border border-dashed border-ink items-center justify-center">
+                <Ionicons name="person-outline" size={32} color="#111111" />
               </View>
             )}
-            <View className="absolute bottom-0 right-0 bg-primary w-7 h-7 rounded-full items-center justify-center border-2 border-white">
-              <Ionicons name={photo ? "camera" : "add"} size={16} color="#fff" />
+            <View className="absolute bottom-0 right-0 bg-primary w-7 h-7 border border-ink items-center justify-center">
+              <Ionicons name={photo ? "camera" : "add"} size={14} color="#FCFBF7" />
             </View>
           </Pressable>
-          <Text className="text-primary font-body-medium text-sm mt-3">
-            {uploadingPhoto ? "Uploading..." : photo ? "Change photo" : "Add a profile photo"}
+          <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[1.5px] mt-3">
+            {uploadingPhoto ? "UPLOADING..." : photo ? "CHANGE PORTRAIT" : "UPLOAD PORTRAIT"}
           </Text>
         </View>
 
         <Input
-          label="Name"
-          placeholder="Your first name"
+          label="Your Full Name"
+          placeholder="E.G. ALEX VANCE"
           value={name}
           onChangeText={setName}
         />
         <Input
-          label="Short bio"
-          placeholder="What are you about? (e.g. 'Chess player and programmer from London')"
+          label="Short Bio"
+          placeholder="WHAT ARE YOU ABOUT? (E.G. CHESS PLAYER AND PROGRAMMER)"
           value={bio}
           onChangeText={setBio}
           multiline
           numberOfLines={3}
         />
         <Input
-          label="Motive"
-          placeholder="Why are you joining? (e.g. 'Making friends', 'Networking')"
+          label="Core Motive"
+          placeholder="WHY ARE YOU JOINING? (E.G. MAKING FRIENDS, COLLABORATING)"
           value={motive}
           onChangeText={setMotive}
         />
         <Input
-          label="City"
-          placeholder="e.g. London, New York, Lagos"
+          label="City / Base"
+          placeholder="E.G. LONDON, TOKYO, NEW YORK"
           value={city}
           onChangeText={setCity}
         />
         <Input
-          label="University / Workplace (optional)"
-          placeholder="Where do you study or work?"
+          label="Institution / Studio (Optional)"
+          placeholder="WHERE DO YOU STUDY OR CREATE?"
           value={school}
           onChangeText={setSchool}
         />
 
-        <View className="mt-4">
+        <View className="mt-4 mb-6">
           <Button
-            label={saving ? "Saving..." : "Continue"}
+            label={saving ? "Saving..." : "Continue to Passions"}
             onPress={handleContinue}
             disabled={saving}
           />

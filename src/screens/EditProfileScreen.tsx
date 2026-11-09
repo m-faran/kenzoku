@@ -52,20 +52,22 @@ export default function EditProfileScreen() {
   return (
     <KeyboardAvoidingView 
       className="flex-1 bg-surface"
-      behavior="padding"
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View className="flex-row items-center justify-between py-4 mb-4">
-          <Pressable onPress={() => navigation.goBack()} className="active:opacity-70">
-            <Ionicons name="arrow-back" size={24} color="#18181B" />
+        <View className="flex-row items-center justify-between py-4 mb-4 border-b border-border">
+          <Pressable onPress={() => navigation.goBack()} className="w-8 h-8 bg-card border border-ink items-center justify-center active:opacity-70">
+            <Ionicons name="arrow-back" size={16} color="#111111" />
           </Pressable>
-          <Text className="text-foreground font-body-semi text-base">Edit Profile</Text>
+          <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+            EDIT IDENTITY
+          </Text>
           <Pressable
             onPress={async () => {
               updateUser({ name, bio, motive, specificInterests, city, school });
@@ -77,9 +79,9 @@ export default function EditProfileScreen() {
                 Alert.alert("Error", e.message ?? "Failed to save profile");
               }
             }}
-            className="active:opacity-70"
+            className="px-3 py-1.5 bg-primary border border-ink active:opacity-85"
           >
-            <Text className="text-primary font-body-semi text-base">Save</Text>
+            <Text className="text-card font-body-bold text-[10px] uppercase tracking-[1.5px]">SAVE</Text>
           </Pressable>
         </View>
 
@@ -88,23 +90,23 @@ export default function EditProfileScreen() {
           <Pressable className="active:opacity-80" onPress={handlePickPhoto} disabled={uploadingPhoto}>
             <Avatar
               uri={photo}
-              size={88}
+              size={96}
             />
-            <View className="absolute bottom-0 right-0 bg-primary w-7 h-7 rounded-full items-center justify-center border-2 border-white">
-              <Ionicons name="camera" size={13} color="#fff" />
+            <View className="absolute bottom-0 right-0 bg-primary w-7 h-7 border border-ink items-center justify-center">
+              <Ionicons name="camera" size={13} color="#FCFBF7" />
             </View>
           </Pressable>
-          <Text className="text-primary font-body-medium text-sm mt-2">
-            {uploadingPhoto ? "Uploading..." : "Change photo"}
+          <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[1.5px] mt-3">
+            {uploadingPhoto ? "UPLOADING..." : "MODIFY PORTRAIT"}
           </Text>
         </View>
 
-        <Input label="Name" value={name} onChangeText={setName} placeholder="Your name" />
+        <Input label="Full Name" value={name} onChangeText={setName} placeholder="Your name" />
         <Input
-          label="Bio"
+          label="Short Bio"
           value={bio}
           onChangeText={setBio}
-          placeholder="Tell people what you're about"
+          placeholder="Tell people what you are about"
           multiline
           numberOfLines={3}
         />
@@ -112,30 +114,30 @@ export default function EditProfileScreen() {
           label="Motive"
           value={motive}
           onChangeText={setMotive}
-          placeholder="Why are you joining? (e.g. 'Making friends', 'Networking')"
+          placeholder="Why are you joining? (e.g. Making friends, Building)"
         />
         <Input
-          label="Specific Interests"
+          label="Specific Niches & Obsessions"
           value={specificInterests}
           onChangeText={setSpecificInterests}
-          placeholder="e.g. For Anime, Attack on Titan. For Coding, React or Python."
+          placeholder="e.g. For Anime, Attack on Titan. For Coding, React or Rust."
           multiline
           numberOfLines={3}
         />
-        <Input label="City" value={city} onChangeText={setCity} placeholder="Your city" />
+        <Input label="City / Region" value={city} onChangeText={setCity} placeholder="Your city" />
         <Input
-          label="University / Workplace"
+          label="Institution / Workspace"
           value={school}
           onChangeText={setSchool}
           placeholder="Optional"
         />
 
         {/* Interests */}
-        <View className="mb-6">
+        <View className="mt-2 mb-6">
           <View className="flex-row items-center justify-between mb-3">
-            <Text className="text-foreground font-body-semi text-sm">Interests</Text>
+            <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">INDEXED PASSIONS</Text>
             <Pressable className="active:opacity-70" onPress={() => navigation.navigate("InterestSelection" as never)}>
-              <Text className="text-primary font-body-medium text-sm">Edit</Text>
+              <Text className="text-primary font-body-bold text-[10px] uppercase tracking-[1.8px]">MODIFY</Text>
             </Pressable>
           </View>
           <View className="flex-row flex-wrap gap-2">
@@ -143,7 +145,6 @@ export default function EditProfileScreen() {
               <InterestChip
                 key={id}
                 label={getInterestLabel(id)}
-                emoji={getInterestEmoji(id)}
                 variant="selected"
               />
             ))}

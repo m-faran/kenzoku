@@ -47,27 +47,41 @@ export default function SettingsScreen() {
 
   return (
     <View className="flex-1 bg-surface">
+      {/* Top technical bar */}
+      <View className="flex-row items-center justify-between px-4 py-3 border-b border-border">
+        <Pressable onPress={() => navigation.goBack()} className="w-8 h-8 bg-card border border-ink items-center justify-center active:opacity-70">
+          <Ionicons name="arrow-back" size={16} color="#111111" />
+        </Pressable>
+        <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+          SYSTEM PREFERENCES
+        </Text>
+        <View className="w-8" />
+      </View>
+
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View className="flex-row items-center px-5 py-4 mb-2">
-          <Pressable onPress={() => navigation.goBack()} className="mr-4 active:opacity-70">
-            <Ionicons name="arrow-back" size={24} color="#18181B" />
-          </Pressable>
-          <Text className="text-foreground font-display text-2xl">Settings</Text>
+        <View className="px-4 pt-4 pb-4">
+          <Text
+            className="text-ink font-display uppercase"
+            style={{ fontSize: 44, lineHeight: 40, letterSpacing: -2 }}
+          >
+            SETTINGS
+          </Text>
         </View>
 
         {sections.map((section) => (
-          <View key={section.title} className="mb-4">
-            <Text className="text-muted font-body-semi text-xs uppercase tracking-wider px-5 mb-2">
-              {section.title}
-            </Text>
-            <View className="bg-white rounded-2xl mx-4 overflow-hidden">
+          <View key={section.title} className="mb-5">
+            <View className="px-4 mb-2 flex-row items-center justify-between">
+              <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px]">
+                {section.title}
+              </Text>
+            </View>
+            <View className="bg-card border border-ink mx-4 overflow-hidden">
               {section.items.map((item, i) => (
                 <React.Fragment key={item.label}>
                   <SettingsRow
                     icon={item.icon}
                     label={item.label}
-                    iconColor={(item as any).iconColor ?? "#7C3AED"}
+                    iconColor="#111111"
                     value={(item as any).value}
                     toggle={(item as any).toggle}
                     toggleValue={(item as any).toggleValue}
@@ -75,7 +89,7 @@ export default function SettingsScreen() {
                     onPress={(item as any).onPress}
                   />
                   {i < section.items.length - 1 && (
-                    <View className="h-px bg-border ml-16" />
+                    <View className="h-px bg-border" />
                   )}
                 </React.Fragment>
               ))}
@@ -90,9 +104,10 @@ export default function SettingsScreen() {
               { text: "Cancel", style: "cancel" },
               { text: "Log Out", style: "destructive", onPress: signOut },
             ])}
-            className="bg-white rounded-2xl px-5 py-4 items-center active:opacity-80"
+            className="bg-card border border-ink px-5 py-4 flex-row items-center justify-between active:opacity-75"
           >
-            <Text className="text-danger font-body-semi text-base">Log Out</Text>
+            <Text className="text-danger font-body-bold text-xs uppercase tracking-[2px]">Log Out</Text>
+            <Ionicons name="log-out-outline" size={16} color="#D92D20" />
           </Pressable>
         </View>
       </ScrollView>

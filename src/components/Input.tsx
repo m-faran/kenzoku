@@ -12,21 +12,31 @@ export default function Input({ label, error, ...props }: Props) {
   return (
     <View className="mb-4">
       {label && (
-        <Text className="text-foreground font-body-medium text-sm mb-1.5">
+        <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[2px] mb-2">
           {label}
         </Text>
       )}
-      <TextInput
-        className={`bg-white border rounded-xl px-4 py-3.5 text-foreground font-body text-base ${
-          focused ? "border-primary" : "border-border"
-        } ${error ? "border-danger" : ""}`}
-        placeholderTextColor="#A1A1AA"
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        {...props}
-      />
+      <View
+        className={`bg-card border px-4 py-3.5 ${
+          error
+            ? "border-danger"
+            : focused
+            ? "border-ink"
+            : "border-border"
+        }`}
+      >
+        <TextInput
+          className="text-ink font-body text-sm"
+          placeholderTextColor="#A8A29E"
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          {...props}
+        />
+      </View>
       {error && (
-        <Text className="text-danger font-body text-xs mt-1">{error}</Text>
+        <Text className="text-danger font-body-semi text-[10px] uppercase tracking-[1px] mt-1.5">
+          {error}
+        </Text>
       )}
     </View>
   );

@@ -18,35 +18,35 @@ export default function PendingConnectionItem({ connection }: Props) {
   if (!sender) return null;
 
   return (
-    <View className="flex-row items-center px-5 py-4 bg-white border-b border-border">
+    <View className="flex-row items-center px-4 py-3.5 bg-card border-b border-border">
       <Pressable 
-        className="flex-row items-center flex-1"
+        className="flex-row items-center flex-1 mr-2"
         onPress={() => navigation.navigate("PersonProfile", { personId: sender.id })}
       >
-        <Avatar uri={sender.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop"} size={48} />
+        <Avatar uri={sender.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop"} size={44} />
         <View className="flex-1 ml-3 mr-2">
-          <Text className="text-foreground font-body-semi text-base" numberOfLines={1}>{sender.name}</Text>
-          <Text className="text-muted font-body text-sm mt-0.5">wants to connect</Text>
+          <Text className="text-ink font-body-bold text-xs uppercase tracking-[1.5px]" numberOfLines={1}>{sender.name}</Text>
+          <Text className="text-muted font-body-semi text-[10px] uppercase tracking-[1.2px] mt-0.5">REQUESTED CONNECTION</Text>
         </View>
       </Pressable>
       
       {isPending ? (
         <View className="px-4 py-2">
-          <ActivityIndicator size="small" color="#7C3AED" />
+          <ActivityIndicator size="small" color="#FF3B1D" />
         </View>
       ) : (
-        <View className="flex-row gap-2">
+        <View className="flex-row items-center gap-2">
           <Pressable
             onPress={() => respond({ connectionId: connection.id, status: "rejected" })}
-            className="px-3 py-1.5 rounded-full bg-surface border border-border"
+            className="px-3 py-2 bg-surface border border-ink items-center justify-center active:opacity-70"
           >
-            <Text className="text-muted font-body-semi text-sm">Reject</Text>
+            <Text className="text-ink font-body-bold text-[10px] uppercase tracking-[1.5px]">Pass</Text>
           </Pressable>
           <Pressable
             onPress={() => respond({ connectionId: connection.id, status: "accepted" })}
-            className="px-3 py-1.5 rounded-full bg-primary"
+            className="px-3.5 py-2 bg-primary border border-ink items-center justify-center active:opacity-85"
           >
-            <Text className="text-white font-body-semi text-sm">Accept</Text>
+            <Text className="text-card font-body-bold text-[10px] uppercase tracking-[1.5px]">Accept</Text>
           </Pressable>
         </View>
       )}
