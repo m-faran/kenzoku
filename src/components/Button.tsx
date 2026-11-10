@@ -26,6 +26,10 @@ export default function Button({
       <Pressable
         onPress={onPress}
         disabled={disabled || loading}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityState={{ disabled: disabled || loading, busy: loading }}
+        accessibilityHint={loading ? `${label}, loading` : undefined}
         className={`flex-row items-stretch bg-ink border border-ink overflow-hidden ${
           fullWidth ? "w-full" : ""
         } ${disabled ? "opacity-40" : "active:opacity-85"}`}
@@ -67,6 +71,10 @@ export default function Button({
     <Pressable
       onPress={onPress}
       disabled={disabled || loading}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: disabled || loading, busy: loading }}
+      accessibilityHint={loading ? `${label}, loading` : undefined}
       className={`${classes.container} ${fullWidth ? "w-full" : ""} ${
         disabled ? "opacity-40" : "active:opacity-75"
       }`}
